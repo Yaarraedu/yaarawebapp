@@ -1,0 +1,20 @@
+{
+  "name": "Yaara Consortium",
+  "short_name": "Yaara",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#12294d",
+  "theme_color": "#12294d",
+  "icons": [
+    {
+      "src": "https://drive.google.com/thumbnail?id=1nPhuOtDszEV0LvRsStHJnO0YlFiSuvUx&sz=w192",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://drive.google.com/thumbnail?id=1nPhuOtDszEV0LvRsStHJnO0YlFiSuvUx&sz=w512",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
