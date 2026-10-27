@@ -1,0 +1,3231 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Yaara Consortium</title>
+  <meta name="theme-color" content="#12294d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Yaara">
+  <link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+  <link rel="manifest" href="manifest.json">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --yc-navy: #12294d;
+    --yc-navy-light: #1a3c6e;
+    --yc-gold: #c99a3f;
+    --yc-bg: #f5f7fb;
+    --yc-border: #e3e8f0;
+    --yc-text: #1f2937;
+    --yc-muted: #6b7280;
+    --yc-success: #1c8a5a;
+    --yc-danger: #c8462b;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--yc-bg);
+    color: var(--yc-text);
+    margin: 0;
+  }
+
+  .yc-auth-shell {
+    min-height: 100vh;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .yc-auth-brandpane {
+    flex: 1.1;
+    background: linear-gradient(160deg, var(--yc-navy) 0%, var(--yc-navy-light) 100%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem 3.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .yc-auth-brandpane::after {
+    content: '';
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: rgba(201, 154, 63, 0.14);
+    right: -140px;
+    bottom: -140px;
+  }
+
+  .yc-auth-brandpane h1 {
+    font-weight: 800;
+    font-size: 2.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .yc-auth-brandpane p {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 1.05rem;
+    max-width: 420px;
+  }
+
+  .yc-auth-formpane {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: #fff;
+  }
+
+  .yc-card {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .yc-logo-mark {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: var(--yc-gold);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--yc-navy);
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+
+  .form-label { font-weight: 600; font-size: 0.88rem; color: var(--yc-text); }
+
+  .form-control, .form-select {
+    border-radius: 10px;
+    border: 1px solid var(--yc-border);
+    padding: 0.65rem 0.9rem;
+  }
+
+  .form-control:focus, .form-select:focus {
+    border-color: var(--yc-navy-light);
+    box-shadow: 0 0 0 3px rgba(26, 60, 110, 0.12);
+  }
+
+  .btn-yc-primary {
+    background: var(--yc-navy);
+    border-color: var(--yc-navy);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+  }
+  .btn-yc-primary:hover { background: var(--yc-navy-light); border-color: var(--yc-navy-light); color: #fff; }
+
+  .btn-yc-gold {
+    background: var(--yc-gold);
+    border-color: var(--yc-gold);
+    color: var(--yc-navy);
+    font-weight: 700;
+  }
+  .btn-yc-gold:hover { filter: brightness(0.95); color: var(--yc-navy); }
+
+  .yc-link { color: var(--yc-navy-light); font-weight: 600; text-decoration: none; }
+  .yc-link:hover { text-decoration: underline; }
+
+  /* ---------- App shell (post-login) ---------- */
+
+  .yc-app-shell { display: flex; min-height: 100vh; }
+
+  .yc-sidebar {
+    width: 250px;
+    background: var(--yc-navy);
+    color: #fff;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem 1rem;
+  }
+
+  .yc-sidebar .yc-brand { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.5rem 1.5rem; }
+  .yc-sidebar .yc-brand span { font-weight: 800; font-size: 1.05rem; }
+
+  .yc-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    color: rgba(255,255,255,0.82);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.92rem;
+    cursor: pointer;
+    margin-bottom: 0.15rem;
+  }
+  .yc-nav-link:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  .yc-nav-link.active { background: var(--yc-gold); color: var(--yc-navy); font-weight: 700; }
+
+  .yc-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+  .yc-topbar {
+    height: 64px;
+    background: #fff;
+    border-bottom: 1px solid var(--yc-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+  }
+
+  .yc-content { padding: 1.75rem; flex: 1; }
+
+  .yc-stat-card {
+    background: #fff;
+    border: 1px solid var(--yc-border);
+    border-radius: 14px;
+    padding: 1.25rem 1.4rem;
+  }
+  .yc-stat-card .value { font-size: 1.6rem; font-weight: 800; color: var(--yc-navy); }
+  .yc-stat-card .label { color: var(--yc-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; }
+
+  .yc-panel {
+    background: #fff;
+    border: 1px solid var(--yc-border);
+    border-radius: 14px;
+    padding: 1.5rem;
+  }
+
+  /* Events/Exchange/Content cards all use a
+     "<div class='d-flex justify-content-between align-items-start'>" with a
+     text block on the left and action buttons on the right. Without this,
+     a long unbroken title/word can force the left block wider than its
+     share of the flex row (flex items default to min-width:auto), pushing
+     it to overlap the actions or the next card instead of wrapping. */
+  .yc-panel .d-flex.justify-content-between.align-items-start > div:first-child {
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+  .yc-panel .d-flex.justify-content-between.align-items-start > div.text-end {
+    flex: 0 0 auto;
+  }
+
+  .yc-step-indicator { display: flex; gap: 0.5rem; margin-bottom: 2rem; }
+  .yc-step-dot {
+    flex: 1; height: 6px; border-radius: 4px; background: var(--yc-border);
+  }
+  .yc-step-dot.done, .yc-step-dot.current { background: var(--yc-navy-light); }
+
+  .yc-toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 2000; }
+
+  .badge-status-active { background: #e4f6ec; color: var(--yc-success); }
+  .badge-status-pending { background: #fdf2e0; color: #a9720f; }
+  .badge-status-suspended, .badge-status-expired { background: #fbe7e2; color: var(--yc-danger); }
+
+  .yc-sidebar-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    color: var(--yc-navy);
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    line-height: 1;
+  }
+
+  .yc-sidebar-backdrop { display: none; }
+
+  @media (max-width: 900px) {
+    .yc-auth-brandpane { display: none; }
+    .yc-sidebar {
+      position: fixed; left: -260px; top: 0; bottom: 0; z-index: 1000;
+      transition: left 0.2s ease; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    }
+    .yc-sidebar.open { left: 0; }
+    .yc-sidebar-toggle { display: inline-flex; }
+    .yc-sidebar-backdrop {
+      display: none;
+      position: fixed; inset: 0; background: rgba(18, 41, 77, 0.45); z-index: 999;
+    }
+    .yc-sidebar-backdrop.open { display: block; }
+  }
+
+  .spinner-overlay {
+    position: fixed; inset: 0; background: rgba(255,255,255,0.7);
+    display: flex; align-items: center; justify-content: center; z-index: 3000;
+  }
+
+  /* Events: three-column card grid (2 on tablets, 1 on phones) */
+  .yc-event-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  @media (max-width: 1100px) { .yc-event-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 640px)  { .yc-event-grid { grid-template-columns: minmax(0, 1fr); } }
+  .yc-event-card { display: flex; flex-direction: column; height: 100%; }
+  .yc-event-poster {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; min-height: 120px; margin-bottom: 0.75rem;
+    background: #eef2f7; border-radius: 8px; overflow: hidden;
+  }
+  /* Show the whole poster: frame grows/shrinks to the image's own shape */
+  .yc-event-poster.loaded { min-height: 0; }
+  .yc-event-poster img { width: 100%; height: auto; max-height: 600px; object-fit: contain; display: block; }
+  .yc-event-poster .bi { font-size: 2.5rem; color: #9aa7b8; }
+  .yc-event-body { flex: 1 1 auto; }
+  .yc-event-actions { margin-top: 0.75rem; }
+</style>
+
+</head>
+<body>
+
+  <!-- ===================== LOGIN (shown inline — no navigation involved) ===================== -->
+  <div id="loginShell" class="d-none">
+    <div class="yc-auth-shell">
+      <div class="yc-auth-brandpane">
+        <div class="yc-logo-mark mb-4">YC</div>
+        <h1>Yaara Consortium</h1>
+        <p>The digital home for schools, educators, and students — events, exchange programs, resources, and a trusted vendor marketplace, all in one place.</p>
+      </div>
+      <div class="yc-auth-formpane">
+        <div class="yc-card">
+
+          <div id="loginView">
+            <h3 class="fw-bold mb-1">Welcome back</h3>
+            <p class="text-muted mb-4">Log in to your Yaara Consortium account.</p>
+            <form id="loginForm">
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" id="loginEmail" required>
+              </div>
+              <div class="mb-2">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" id="loginPassword" required>
+              </div>
+              <div class="text-end mb-3">
+                <a href="#" class="yc-link" style="font-size:0.85rem;" onclick="loginShowView('forgotView'); return false;">Forgot password?</a>
+              </div>
+              <button type="submit" class="btn btn-yc-primary w-100 mb-3">Log in</button>
+            </form>
+            <p class="text-center text-muted" style="font-size:0.9rem;">
+              New school? <a href="#" class="yc-link" onclick="loginShowView('registerView'); return false;">Join the consortium</a>
+            </p>
+          </div>
+
+          <div id="registerView" class="d-none">
+            <h3 class="fw-bold mb-1">Join Yaara Consortium</h3>
+            <p class="text-muted mb-4">Create an account to get started.</p>
+            <form id="registerForm">
+              <div class="mb-3">
+                <label class="form-label">I am registering as</label>
+                <select class="form-select" id="regRole">
+                  <option value="School Admin">A School (School Admin)</option>
+                  <option value="Vendor">A Vendor</option>
+                  <option value="Evaluator">An Evaluator</option>
+                </select>
+              </div>
+              <div class="row">
+                <div class="col-6 mb-3">
+                  <label class="form-label">First name</label>
+                  <input type="text" class="form-control" id="regFirstName" required>
+                </div>
+                <div class="col-6 mb-3">
+                  <label class="form-label">Last name</label>
+                  <input type="text" class="form-control" id="regLastName" required>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Work email</label>
+                <input type="email" class="form-control" id="regEmail" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" id="regPassword" minlength="8" required>
+                <div class="form-text">At least 8 characters.</div>
+              </div>
+              <button type="submit" class="btn btn-yc-primary w-100 mb-3">Create account</button>
+            </form>
+            <p class="text-center text-muted" style="font-size:0.9rem;">
+              Already have an account? <a href="#" class="yc-link" onclick="loginShowView('loginView'); return false;">Log in</a>
+            </p>
+          </div>
+
+          <div id="forgotView" class="d-none">
+            <h3 class="fw-bold mb-1">Reset your password</h3>
+            <p class="text-muted mb-4">Enter your email and we'll send you a reset link.</p>
+            <form id="forgotForm">
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" id="forgotEmail" required>
+              </div>
+              <button type="submit" class="btn btn-yc-primary w-100 mb-3">Send reset link</button>
+            </form>
+            <p class="text-center"><a href="#" class="yc-link" onclick="loginShowView('loginView'); return false;">Back to login</a></p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== ONBOARDING WIZARD ===================== -->
+  <div id="onboardingShell" class="d-none">
+    <div class="yc-auth-shell" style="align-items:flex-start;">
+      <div class="yc-auth-formpane" style="flex:1; max-width:100%;">
+        <div style="width:100%; max-width:640px;">
+          <div class="d-flex align-items-center gap-2 mb-4">
+            <div class="yc-logo-mark">YC</div>
+            <div class="fw-bold fs-5">Yaara Consortium — School Onboarding</div>
+          </div>
+
+          <div class="yc-step-indicator">
+            <div class="yc-step-dot" data-step="1"></div>
+            <div class="yc-step-dot" data-step="2"></div>
+          </div>
+
+          <div class="yc-panel mb-3 onboarding-step" data-step="1">
+            <h5 class="fw-bold mb-3">Step 1 of 2 — School information</h5>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">School name</label>
+                <input class="form-control" id="obSchoolName" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Board affiliation</label>
+                <input class="form-control" id="obBoard" placeholder="CBSE, ICSE, IB, State Board..." required>
+              </div>
+              <div class="col-12 mb-3">
+                <label class="form-label">Address</label>
+                <input class="form-control" id="obAddress" required>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">City</label>
+                <input class="form-control" id="obCity" required>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">State</label>
+                <input class="form-control" id="obState" required>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Country</label>
+                <input class="form-control" id="obCountry" value="India" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">School type</label>
+                <select class="form-select" id="obSchoolType" required>
+                  <option value="">Select...</option>
+                  <option>Day School</option>
+                  <option>Boarding School</option>
+                  <option>International School</option>
+                  <option>Government School</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">School logo (optional)</label>
+                <input class="form-control" type="file" id="obLogo" accept="image/*">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Contact person</label>
+                <input class="form-control" id="obContactName" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Contact email</label>
+                <input class="form-control" type="email" id="obContactEmail" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Contact phone</label>
+                <input class="form-control" id="obContactPhone">
+              </div>
+            </div>
+            <button class="btn btn-yc-primary w-100" onclick="obGoToStep2()">Continue</button>
+          </div>
+
+          <div class="yc-panel mb-3 onboarding-step d-none" data-step="2">
+            <h5 class="fw-bold mb-3">Step 2 of 2 — Programme information</h5>
+            <p class="text-muted">Is your school enrolled in the Yaara Early Years Curriculum? This controls access to Early Years-specific content and resources.</p>
+            <div class="d-flex gap-3 mb-4">
+              <button class="btn btn-outline-secondary flex-fill py-3" id="obEyYes" onclick="obSetEarlyYears(true)">Yes, we are enrolled</button>
+              <button class="btn btn-outline-secondary flex-fill py-3" id="obEyNo" onclick="obSetEarlyYears(false)">Not at this time</button>
+            </div>
+            <button class="btn btn-link" onclick="obShowStep(1)">&larr; Back</button>
+          </div>
+
+          <div class="yc-panel onboarding-step d-none text-center py-5" data-step="done">
+            <div class="fs-1 text-warning mb-3"><i class="bi bi-hourglass-split"></i></div>
+            <h5 class="fw-bold">Registration submitted!</h5>
+            <p class="text-muted mb-4">Your school registration has been sent to a Super Admin for approval. Once approved, your consortium membership will be active for one year — no payment needed right now. You'll receive an email and in-app notification.</p>
+            <button class="btn btn-yc-primary px-4" onclick="enterApp()">Go to my dashboard</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== VENDOR ONBOARDING ===================== -->
+  <div id="vendorOnboardingShell" class="d-none">
+    <div class="yc-auth-shell" style="align-items:flex-start;">
+      <div class="yc-auth-formpane" style="flex:1; max-width:100%;">
+        <div style="width:100%; max-width:600px;">
+          <div class="d-flex align-items-center gap-2 mb-4">
+            <div class="yc-logo-mark">YC</div>
+            <div class="fw-bold fs-5">Yaara Consortium — Vendor Registration</div>
+          </div>
+          <div class="yc-panel">
+            <h5 class="fw-bold mb-3">Tell us about your company</h5>
+            <div class="row">
+              <div class="col-md-6 mb-3"><label class="form-label">Company name</label><input class="form-control" id="voCompanyName" required></div>
+              <div class="col-md-6 mb-3"><label class="form-label">Category</label>
+                <select class="form-select" id="voCategory" required>
+                  <option value="">Select...</option>
+                  <option>Uniforms</option><option>Books & Stationery</option><option>EdTech</option>
+                  <option>Furniture & Fixtures</option><option>Transport</option><option>Canteen Supplies</option>
+                  <option>Sports Equipment</option><option>Lab Supplies</option><option>Digital Infrastructure</option>
+                </select>
+              </div>
+              <div class="col-12 mb-3"><label class="form-label">Description</label><textarea class="form-control" id="voDescription" rows="2"></textarea></div>
+              <div class="col-md-6 mb-3"><label class="form-label">Contact name</label><input class="form-control" id="voContactName"></div>
+              <div class="col-md-6 mb-3"><label class="form-label">Contact email</label><input class="form-control" type="email" id="voContactEmail" required></div>
+              <div class="col-md-6 mb-3"><label class="form-label">Phone</label><input class="form-control" id="voPhone"></div>
+              <div class="col-md-6 mb-3"><label class="form-label">Website</label><input class="form-control" id="voWebsite"></div>
+              <div class="col-12 mb-3"><label class="form-label">Address</label><input class="form-control" id="voAddress"></div>
+              <div class="col-12 mb-3"><label class="form-label">Consortium offer (special discount for member schools)</label><input class="form-control" id="voOffer"></div>
+              <div class="col-12 mb-3"><label class="form-label">Logo (optional)</label><input class="form-control" type="file" id="voLogo" accept="image/*"></div>
+            </div>
+            <button class="btn btn-yc-primary w-100" onclick="submitVendorOnboarding()">Submit for Approval</button>
+            <p class="text-muted small mt-2 mb-0">Your listing will be reviewed by a Super Admin before it appears in the vendor directory. You can still log in and manage your profile while it's pending.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== POST-LOGIN APP SHELL ===================== -->
+  <div id="appShell" class="d-none">
+    <div class="yc-app-shell">
+      <div class="yc-sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+      <div class="yc-sidebar" id="sidebar">
+        <div class="yc-brand"><div class="yc-logo-mark">YC</div><span>Yaara Consortium</span></div>
+        <div id="sidebarNav"></div>
+        <div class="mt-auto">
+          <a class="yc-nav-link" onclick="closeSidebar(); openChangePasswordModal();"><i class="bi bi-key-fill"></i> Change Password</a>
+          <a class="yc-nav-link" onclick="closeSidebar(); doLogout();"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        </div>
+      </div>
+      <div class="yc-main">
+        <div class="yc-topbar">
+          <div class="d-flex align-items-center gap-2">
+            <button type="button" class="yc-sidebar-toggle" id="sidebarToggleBtn" onclick="toggleSidebar()" aria-label="Open menu"><i class="bi bi-list"></i></button>
+            <div class="fw-bold" id="topbarTitle">Dashboard</div>
+          </div>
+          <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-bell fs-5" style="cursor:pointer;" onclick="switchView('notifications')"></i>
+            <span id="topbarUserName" class="fw-semibold"></span>
+          </div>
+        </div>
+        <div class="yc-content">
+
+          <!-- DASHBOARD -->
+          <div class="yc-view" id="view-dashboard">
+            <div id="dashboardStatsRow" class="row g-3 mb-3"></div>
+            <div class="yc-panel mb-3">
+              <h5 class="fw-bold">Welcome to Yaara Consortium</h5>
+              <p class="text-muted mb-0">
+                You're logged in as <strong id="userRoleLabel"></strong>. Events, the content library,
+                vendor marketplace, exchange programs and promotions arrive in upcoming build phases —
+                Phase 1–2 covers authentication, roles, school onboarding, and core admin tools end-to-end.
+              </p>
+            </div>
+          </div>
+
+          <!-- SCHOOLS (Super Admin) -->
+          <div class="yc-view d-none" id="view-schools">
+            <div class="yc-panel">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0">Schools</h5>
+                <input class="form-control" style="max-width:260px;" placeholder="Search by name or city..." id="schoolSearchInput" oninput="debounceLoadSchools()">
+              </div>
+              <div class="table-responsive">
+                <table class="table align-middle">
+                  <thead><tr><th>School</th><th>City</th><th>Membership</th><th>Status</th><th></th></tr></thead>
+                  <tbody id="schoolsTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- USERS (Super Admin) -->
+          <div class="yc-view d-none" id="view-users">
+            <div class="yc-panel">
+              <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <h5 class="fw-bold mb-0">Users</h5>
+                <div class="d-flex gap-2">
+                  <select class="form-select" id="userRoleFilter" onchange="loadUsers()">
+                    <option value="">All roles</option>
+                    <option>Super Admin</option><option>School Admin</option>
+                    <option>Teacher</option><option>Student</option><option>Vendor</option>
+                  </select>
+                  <input class="form-control" style="max-width:220px;" placeholder="Search name or email..." id="userSearchInput" oninput="debounceLoadUsers()">
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table class="table align-middle">
+                  <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>School</th><th>Status</th><th></th></tr></thead>
+                  <tbody id="usersTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- MY SCHOOL (School Admin) -->
+          <div class="yc-view d-none" id="view-myschool">
+            <div class="yc-panel mb-3" id="mySchoolCard"></div>
+
+            <div class="yc-panel">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0">Teachers &amp; Students</h5>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-outline-secondary" onclick="openInvite('Teacher')">+ Invite Teacher</button>
+                  <button class="btn btn-sm btn-outline-secondary" onclick="openInvite('Student')">+ Invite Student</button>
+                </div>
+              </div>
+              <div id="inviteFormBox" class="d-none mb-3 p-3" style="background:var(--yc-bg);border-radius:10px;">
+                <div class="row g-2 align-items-end">
+                  <div class="col-md-6"><label class="form-label">Email</label><input class="form-control" id="inviteEmailInput" type="email"></div>
+                  <div class="col-md-3"><span class="badge bg-secondary" id="inviteRoleBadge"></span></div>
+                  <div class="col-md-3 text-end"><button class="btn btn-yc-primary btn-sm" onclick="sendMyInvite()">Send Invitation</button></div>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table class="table align-middle">
+                  <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th></tr></thead>
+                  <tbody id="schoolUsersTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- NOTIFICATIONS (all roles) -->
+          <div class="yc-view d-none" id="view-notifications">
+            <div class="yc-panel">
+              <h5 class="fw-bold mb-3">Notifications</h5>
+              <div id="notificationsList"></div>
+            </div>
+          </div>
+
+          <!-- EVENTS -->
+          <div class="yc-view d-none" id="view-events">
+            <div class="yc-panel mb-3" id="eventCreatePanel" style="display:none;">
+              <h5 class="fw-bold mb-3">Create Event</h5>
+              <div class="row g-2">
+                <div class="col-md-6"><label class="form-label">Title</label><input class="form-control" id="evTitle"></div>
+                <div class="col-md-3"><label class="form-label">Type</label>
+                  <select class="form-select" id="evType"><option>Leadership Conclave</option><option>Workshop</option><option>Competition</option><option>Webinar</option></select></div>
+                <div class="col-md-3"><label class="form-label">Format</label>
+                  <select class="form-select" id="evFormat"><option>In-Person</option><option>Virtual</option><option>Hybrid</option></select></div>
+                <div class="col-md-4"><label class="form-label">Start date/time</label><input class="form-control" type="datetime-local" id="evStart"></div>
+                <div class="col-md-4"><label class="form-label">End date/time</label><input class="form-control" type="datetime-local" id="evEnd"></div>
+                <div class="col-md-4"><label class="form-label">Capacity</label><input class="form-control" type="number" id="evCapacity" value="50"></div>
+                <div class="col-md-6"><label class="form-label">Venue / Meeting link</label><input class="form-control" id="evVenue"></div>
+                <div class="col-md-3"><label class="form-label">Speaker</label><input class="form-control" id="evSpeaker"></div>
+                <div class="col-md-3"><label class="form-label">Fee (₹, 0 = free)</label><input class="form-control" type="number" id="evFee" value="0"></div>
+                <div class="col-12"><label class="form-label">Description</label><textarea class="form-control" id="evDescription" rows="2"></textarea></div>
+                <div class="col-md-6">
+                  <label class="form-label">Poster / thumbnail image (optional)</label>
+                  <input class="form-control" type="file" id="evCoverFile" accept="image/*">
+                  <img id="evCoverPreview" src="" style="display:none;max-height:90px;margin-top:6px;border-radius:6px;">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Materials type</label>
+                  <select class="form-select" id="evMaterialsType">
+                    <option value="">— None —</option>
+                    <option>Google Slides</option>
+                    <option>Google Docs</option>
+                    <option>Google Sheets</option>
+                    <option>PDF</option>
+                    <option>Picture</option>
+                    <option>Video</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Materials link</label>
+                  <input class="form-control" id="evMaterialsUrl" placeholder="Paste a share link">
+                </div>
+                <div class="col-12">
+                  <label class="form-label">...or upload a materials file instead of a link</label>
+                  <input class="form-control" type="file" id="evMaterialsFile">
+                </div>
+                <div class="col-12" id="evPublishNowWrap">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="evPublishNow" checked>
+                    <label class="form-check-label" for="evPublishNow">Publish immediately (uncheck to save as a private draft)</label>
+                  </div>
+                </div>
+                <div class="col-12" id="evApprovalNoticeWrap" style="display:none;">
+                  <p class="text-muted small mb-0"><i class="bi bi-info-circle"></i> Your event will be submitted to Super Admin for approval, and will only be visible to other schools once approved.</p>
+                </div>
+              </div>
+              <button class="btn btn-yc-primary mt-3" onclick="submitCreateEvent()">Create Event</button>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="fw-bold mb-0">Events</h5>
+              <button class="btn btn-sm btn-yc-primary" id="eventCreateToggleBtn" style="display:none;" onclick="toggleEventCreatePanel()">+ New Event</button>
+            </div>
+            <div id="eventsList"></div>
+          </div>
+
+          <!-- EXCHANGE PROGRAMS -->
+          <div class="yc-view d-none" id="view-exchange">
+            <div class="yc-panel mb-3" id="exchangeCreatePanel" style="display:none;">
+              <h5 class="fw-bold mb-3">Post an Exchange Opportunity</h5>
+              <div class="row g-2">
+                <div class="col-md-3"><label class="form-label">Type</label><select class="form-select" id="exType"><option>Teacher</option><option>Student</option></select></div>
+                <div class="col-md-5"><label class="form-label">Subject</label><input class="form-control" id="exSubject"></div>
+                <div class="col-md-4"><label class="form-label">Grade</label><input class="form-control" id="exGrade"></div>
+                <div class="col-md-6"><label class="form-label">Duration</label><input class="form-control" id="exDuration" placeholder="e.g. 2 weeks"></div>
+                <div class="col-md-6"><label class="form-label">Objectives</label><input class="form-control" id="exObjectives"></div>
+                <div class="col-12"><label class="form-label">Description</label><textarea class="form-control" id="exDescription" rows="2"></textarea></div>
+              </div>
+              <button class="btn btn-yc-primary mt-3" onclick="submitCreateExchange()">Post Opportunity</button>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="fw-bold mb-0">Exchange Programs</h5>
+              <button class="btn btn-sm btn-yc-primary" id="exchangeCreateToggleBtn" style="display:none;" onclick="toggleExchangeCreatePanel()">+ Post Opportunity</button>
+            </div>
+            <div id="exchangesList" class="d-flex flex-column gap-3"></div>
+          </div>
+
+          <!-- CONTENT LIBRARY -->
+          <div class="yc-view d-none" id="view-content">
+            <div class="yc-panel mb-3" id="contentCreatePanel" style="display:none;">
+              <h5 class="fw-bold mb-3">Create Content</h5>
+              <div class="row g-2">
+                <div class="col-md-6"><label class="form-label">Title</label><input class="form-control" id="cnTitle"></div>
+                <div class="col-md-3"><label class="form-label">Type</label>
+                  <select class="form-select" id="cnType"><option>Article</option><option>Announcement</option><option>Podcast</option><option>Webinar</option><option>Recorded Workshop</option><option>Resource</option><option>Video</option></select></div>
+                <div class="col-md-3"><label class="form-label">Category</label><input class="form-control" id="cnCategory"></div>
+                <div class="col-md-4"><label class="form-label">Media URL (YouTube/Vimeo/Drive link)</label><input class="form-control" id="cnMediaUrl"></div>
+                <div class="col-md-4"><label class="form-label">Date of event (optional)</label><input type="date" class="form-control" id="cnEventDate"></div>
+                <div class="col-md-4 d-flex align-items-end">
+                  <div class="form-check"><input class="form-check-input" type="checkbox" id="cnEarlyYears"><label class="form-check-label" for="cnEarlyYears">Early Years Curriculum only</label></div>
+                </div>
+                <div class="col-12"><label class="form-label">Description</label><textarea class="form-control" id="cnDescription" rows="2"></textarea></div>
+                <div class="col-12"><label class="form-label">Full content / notes</label><textarea class="form-control" id="cnFullContent" rows="3"></textarea></div>
+              </div>
+              <button class="btn btn-yc-primary mt-3" onclick="submitCreateContent()">Create as Draft</button>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+              <h5 class="fw-bold mb-0">Content Library</h5>
+              <div class="d-flex gap-2">
+                <select class="form-select" id="contentTypeFilter" onchange="loadContentLibrary()">
+                  <option value="">All types</option>
+                  <option>Article</option><option>Announcement</option><option>Podcast</option><option>Webinar</option><option>Recorded Workshop</option><option>Resource</option><option>Video</option>
+                </select>
+                <input class="form-control" style="max-width:200px;" placeholder="Search..." id="contentSearchInput" oninput="debounceLoadContent()">
+                <button class="btn btn-sm btn-yc-primary" id="contentCreateToggleBtn" style="display:none;" onclick="toggleContentCreatePanel()">+ New</button>
+              </div>
+            </div>
+            <div id="contentList" class="row g-3"></div>
+          </div>
+
+          <!-- SELF EVALUATION (School Admin fills this in) -->
+          <div class="yc-view d-none" id="view-selfeval">
+            <div class="yc-panel mb-3 d-flex justify-content-between align-items-center">
+              <div>
+                <h5 class="fw-bold mb-1">Self Evaluation Questionnaire</h5>
+                <p class="text-muted mb-0" id="selfEvalStatusLine"></p>
+              </div>
+              <div>
+                <button class="btn btn-outline-secondary me-2" onclick="saveSelfEvaluation()">Save Draft</button>
+                <button class="btn btn-yc-primary" onclick="submitSelfEvaluation()">Submit Evaluation</button>
+              </div>
+            </div>
+            <div id="selfEvalForm"></div>
+          </div>
+
+          <!-- EVALUATIONS (Evaluator / Super Admin review queue) -->
+          <div class="yc-view d-none" id="view-evaluations">
+            <div id="evaluationsListPanel" class="yc-panel mb-3">
+              <h5 class="fw-bold mb-3">Submitted Evaluations</h5>
+              <div id="evaluationsList"></div>
+            </div>
+            <div id="evaluationDetailPanel" class="d-none"></div>
+          </div>
+
+          <!-- VENDORS (directory for everyone, management table for Super Admin) -->
+          <div class="yc-view d-none" id="view-vendors">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+              <h5 class="fw-bold mb-0">Vendors</h5>
+              <div class="d-flex gap-2">
+                <select class="form-select" id="vendorCategoryFilter" onchange="loadVendorsView()">
+                  <option value="">All categories</option>
+                  <option>Uniforms</option><option>Books & Stationery</option><option>EdTech</option>
+                  <option>Furniture & Fixtures</option><option>Transport</option><option>Canteen Supplies</option>
+                  <option>Sports Equipment</option><option>Lab Supplies</option><option>Digital Infrastructure</option>
+                </select>
+                <input class="form-control" style="max-width:200px;" placeholder="Search..." id="vendorSearchInput" oninput="debounceLoadVendors()">
+              </div>
+            </div>
+            <div id="vendorsList" class="row g-3"></div>
+          </div>
+
+          <!-- MY LISTING (Vendor role) -->
+          <div class="yc-view d-none" id="view-mylisting">
+            <div class="yc-panel" id="myListingPanel"></div>
+          </div>
+
+          <!-- VENDOR ENQUIRIES (Vendor role) -->
+          <div class="yc-view d-none" id="view-vendorenquiries">
+            <div class="yc-panel">
+              <h5 class="fw-bold mb-3">Enquiries from Schools</h5>
+              <div id="vendorEnquiriesList"></div>
+            </div>
+          </div>
+
+          <!-- REQUIREMENTS (School Admin posts, Vendors respond, Super Admin oversees) -->
+          <div class="yc-view d-none" id="view-requirements">
+            <div class="yc-panel mb-3" id="requirementCreatePanel" style="display:none;">
+              <h5 class="fw-bold mb-3">Post a Requirement</h5>
+              <div class="row g-2">
+                <div class="col-md-6"><label class="form-label">Title</label><input class="form-control" id="reqTitle" placeholder="e.g. 50 sets of Grade 3 uniforms"></div>
+                <div class="col-md-3"><label class="form-label">Category</label>
+                  <select class="form-select" id="reqCategory">
+                    <option value="">Select...</option>
+                    <option>Uniforms</option><option>Books & Stationery</option><option>EdTech</option>
+                    <option>Furniture & Fixtures</option><option>Transport</option><option>Canteen Supplies</option>
+                    <option>Sports Equipment</option><option>Lab Supplies</option><option>Digital Infrastructure</option><option>Other</option>
+                  </select></div>
+                <div class="col-md-3"><label class="form-label">Quantity</label><input class="form-control" id="reqQuantity" placeholder="e.g. 50"></div>
+                <div class="col-md-4"><label class="form-label">Needed by (optional)</label><input type="date" class="form-control" id="reqNeededBy"></div>
+                <div class="col-12"><label class="form-label">Description</label><textarea class="form-control" id="reqDescription" rows="2" placeholder="Details vendors need to quote accurately"></textarea></div>
+              </div>
+              <button class="btn btn-yc-primary mt-3" onclick="submitCreateRequirement()">Post Requirement</button>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="fw-bold mb-0">Requirements</h5>
+              <button class="btn btn-sm btn-yc-primary" id="requirementCreateToggleBtn" style="display:none;" onclick="toggleRequirementCreatePanel()">+ Post Requirement</button>
+            </div>
+            <div id="requirementsList" class="d-flex flex-column gap-3"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHANGE PASSWORD MODAL (available from every role's sidebar) -->
+  <div class="modal fade" id="changePasswordModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold">Change Password</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Current password</label>
+            <input type="password" class="form-control" id="cpCurrent">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">New password</label>
+            <input type="password" class="form-control" id="cpNew" minlength="8">
+            <div class="form-text">At least 8 characters.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Confirm new password</label>
+            <input type="password" class="form-control" id="cpConfirm">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-yc-primary" onclick="submitChangePassword()">Update Password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT MEMBERSHIP DATES (Super Admin) -->
+  <div class="modal fade" id="editMembershipDatesModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold">Edit Membership Validity</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted small" id="emdSchoolName"></p>
+          <div class="mb-3">
+            <label class="form-label">Start date</label>
+            <input type="date" class="form-control" id="emdStartDate">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Expiry date</label>
+            <input type="date" class="form-control" id="emdExpiryDate">
+          </div>
+          <div class="form-text">Leave either field blank to leave it unchanged. Saving marks the membership Active.</div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-yc-primary" onclick="submitEditMembershipDates()">Save Dates</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+/**
+ * ============================================================
+ * Shared front-end helpers, pulled into every page by the
+ * include('JavaScript') helper (see Index.html).
+ * ============================================================
+ */
+
+// Surface any uncaught error visibly instead of leaving a blank page —
+// makes future issues self-diagnosing instead of requiring a DevTools hunt.
+window.addEventListener('error', function (e) {
+  var box = document.createElement('div');
+  box.style.cssText = 'position:fixed;inset:0;background:#fff;color:#c8462b;font-family:sans-serif;padding:2rem;z-index:99999;overflow:auto;';
+  box.innerHTML = '<h3>Something went wrong loading the app</h3>' +
+    '<p><strong>' + (e.message || 'Unknown error') + '</strong></p>' +
+    '<p style="color:#666;font-size:0.85rem;">' + (e.filename || '') + ' line ' + (e.lineno || '?') + '</p>';
+  document.body.appendChild(box);
+});
+
+// Where the JSON API lives (the same Apps Script web app, "/exec" link).
+// Only used when this page is NOT being served by Apps Script itself — i.e.
+// the hosted website and the Android / iPhone apps. If you ever create a new
+// deployment, update this one line.
+var YC_API_URL = 'https://script.google.com/macros/s/AKfycbwk4wKZkQLoeJzBN2b9lrc2cPG1Ja8s3FgJWyXYyRQnwqR9m1rgOFdtFZ6iLWmeLybV/exec';
+
+var YC = (function () {
+  var SESSION_KEY = 'yc_session_token';
+  var USER_KEY = 'yc_current_user';
+
+  function getSessionToken() {
+    return localStorage.getItem(SESSION_KEY) || '';
+  }
+
+  function setSession(token, user) {
+    localStorage.setItem(SESSION_KEY, token || '');
+    localStorage.setItem(USER_KEY, JSON.stringify(user || null));
+  }
+
+  function clearSession() {
+    localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(USER_KEY);
+  }
+
+  function getCachedUser() {
+    try {
+      return JSON.parse(localStorage.getItem(USER_KEY) || 'null');
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function nullResponseError_(functionName) {
+    return {
+      success: false,
+      message: 'Server function "' + functionName + '" returned no response. Check that this function exists in the Apps Script project and was deployed.',
+      errorCode: 'NULL_RESPONSE'
+    };
+  }
+
+  /** True when this page is being served by Apps Script (google.script.run exists). */
+  function insideAppsScript_() {
+    return typeof google !== 'undefined' && google && google.script && google.script.run;
+  }
+
+  /** Original path: Apps Script's built-in bridge. */
+  function callViaAppsScript_(functionName, extraArgs) {
+    return new Promise(function (resolve, reject) {
+      google.script.run
+        .withSuccessHandler(function (result) {
+          if (result === null || result === undefined) {
+            // A well-behaved backend function always returns a
+            // {success, message, data} envelope. Getting null/undefined here
+            // means that function either has no return statement on some
+            // code path, or doesn't exist as written server-side.
+            reject(nullResponseError_(functionName));
+            return;
+          }
+          resolve(result);
+        })
+        .withFailureHandler(function (error) {
+          reject({ success: false, message: error && error.message ? error.message : 'Unexpected error', errorCode: 'CLIENT_ERROR' });
+        })[functionName].apply(null, extraArgs);
+    });
+  }
+
+  /**
+   * Hosted-site / mobile-app path: POST the call to the Apps Script JSON API
+   * (doPost in Code.gs). Sent as text/plain on purpose — that counts as a
+   * "simple" request, so the browser skips the CORS pre-flight that Apps
+   * Script cannot answer.
+   */
+  function callViaApi_(functionName, extraArgs) {
+    return fetch(YC_API_URL, {
+      method: 'POST',
+      redirect: 'follow',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ fn: functionName, args: extraArgs })
+    }).then(function (resp) {
+      return resp.text();
+    }).then(function (text) {
+      var result;
+      try { result = JSON.parse(text); } catch (e) {
+        throw { success: false, message: 'The server sent an unexpected reply. Please try again.', errorCode: 'BAD_RESPONSE' };
+      }
+      if (result === null || result === undefined) throw nullResponseError_(functionName);
+      return result;
+    }, function () {
+      throw { success: false, message: 'Could not reach the server. Check your internet connection and try again.', errorCode: 'CLIENT_ERROR' };
+    });
+  }
+
+  /**
+   * Calls a backend function by name and resolves with its
+   * { success, message, data } envelope. Works the same whether the page
+   * is served by Apps Script or hosted elsewhere.
+   */
+  function call(functionName) {
+    var extraArgs = Array.prototype.slice.call(arguments, 1);
+    return insideAppsScript_() ? callViaAppsScript_(functionName, extraArgs) : callViaApi_(functionName, extraArgs);
+  }
+
+  /** Same as call(), but auto-injects the session token as arg 0. */
+  function authedCall(functionName) {
+    var extraArgs = Array.prototype.slice.call(arguments, 1);
+    return call.apply(null, [functionName, getSessionToken()].concat(extraArgs));
+  }
+
+  // ---------- UI helpers ----------
+
+  function toast(message, variant) {
+    variant = variant || 'dark';
+    var container = document.getElementById('ycToastContainer');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'ycToastContainer';
+      container.className = 'yc-toast-container';
+      document.body.appendChild(container);
+    }
+    var el = document.createElement('div');
+    el.className = 'toast align-items-center text-bg-' + variant + ' border-0 show mb-2';
+    el.setAttribute('role', 'alert');
+    el.innerHTML = '<div class="d-flex"><div class="toast-body">' + message + '</div>' +
+      '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>';
+    container.appendChild(el);
+    setTimeout(function () { el.remove(); }, 5000);
+  }
+
+  function showLoading() {
+    if (document.getElementById('ycSpinnerOverlay')) return;
+    var overlay = document.createElement('div');
+    overlay.id = 'ycSpinnerOverlay';
+    overlay.className = 'spinner-overlay';
+    overlay.innerHTML = '<div class="spinner-border" style="color:var(--yc-navy);" role="status"></div>';
+    document.body.appendChild(overlay);
+  }
+
+  function hideLoading() {
+    var overlay = document.getElementById('ycSpinnerOverlay');
+    if (overlay) overlay.remove();
+  }
+
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  return {
+    getSessionToken: getSessionToken,
+    setSession: setSession,
+    clearSession: clearSession,
+    getCachedUser: getCachedUser,
+    call: call,
+    authedCall: authedCall,
+    toast: toast,
+    showLoading: showLoading,
+    hideLoading: hideLoading,
+    escapeHtml: escapeHtml
+  };
+})();
+
+// Global safety net: any promise rejection that isn't caught locally
+// (e.g. a server function that's missing, or the null-response guard above)
+// surfaces as a visible toast instead of silently failing or only showing
+// up as a cryptic error in a console most people never open.
+window.addEventListener('unhandledrejection', function (event) {
+  var reason = event.reason;
+  var message = (reason && reason.message) ? reason.message : 'An unexpected error occurred. Please try again.';
+  YC.toast(message, 'danger');
+  event.preventDefault();
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    /**
+     * IMPORTANT ARCHITECTURE NOTE:
+     * This entire app (login, onboarding, dashboard) lives in ONE page load.
+     * We never change top.location or reload the page to move between these
+     * states — we just show/hide the relevant shell. This sidesteps a real
+     * constraint of Apps Script's sandboxed iframe: window/top navigation
+     * triggered by script (rather than a literal, immediate user click on an
+     * <a> tag) is unreliable inside the sandbox, especially after any async
+     * gap. Switching shells in-place has none of that risk.
+     */
+
+    var onboardingState = {};
+    var currentUser = null;
+
+    function showShell(id) {
+      ['loginShell', 'onboardingShell', 'vendorOnboardingShell', 'appShell'].forEach(function (s) {
+        document.getElementById(s).classList.toggle('d-none', s !== id);
+      });
+    }
+
+    function loginShowView(id) {
+      ['loginView', 'registerView', 'forgotView'].forEach(function (v) {
+        document.getElementById(v).classList.toggle('d-none', v !== id);
+      });
+    }
+
+    function enterAppForUser(user) {
+      currentUser = user;
+      if (user.role === 'School Admin' && !user.schoolId) {
+        showShell('onboardingShell');
+        obShowStep(1);
+      } else if (user.role === 'Vendor' && !user.vendorId) {
+        showShell('vendorOnboardingShell');
+      } else {
+        showShell('appShell');
+        document.getElementById('topbarUserName').textContent = user.firstName + ' ' + user.lastName;
+        document.getElementById('userRoleLabel').textContent = user.role;
+        buildSidebar(user.role);
+        switchView('dashboard');
+      }
+    }
+
+    function submitVendorOnboarding() {
+      var data = {
+        companyName: document.getElementById('voCompanyName').value,
+        category: document.getElementById('voCategory').value,
+        description: document.getElementById('voDescription').value,
+        contactName: document.getElementById('voContactName').value,
+        contactEmail: document.getElementById('voContactEmail').value,
+        phone: document.getElementById('voPhone').value,
+        website: document.getElementById('voWebsite').value,
+        address: document.getElementById('voAddress').value,
+        consortiumOffer: document.getElementById('voOffer').value
+      };
+      if (!data.companyName || !data.category || !data.contactEmail) {
+        YC.toast('Company name, category, and contact email are required.', 'danger');
+        return;
+      }
+      var logoFile = document.getElementById('voLogo').files[0];
+      function finish() {
+        YC.showLoading();
+        YC.authedCall('createVendorProfile', data).then(function (res) {
+          YC.hideLoading();
+          if (!res.success) { YC.toast(res.message, 'danger'); return; }
+          YC.toast(res.message, 'success');
+          YC.authedCall('getCurrentUser').then(function (curRes) {
+            if (curRes.success) { YC.setSession(YC.getSessionToken(), curRes.data); enterAppForUser(curRes.data); }
+          });
+        }).catch(function (err) {
+          YC.hideLoading();
+          YC.toast(err && err.message ? err.message : 'Could not submit vendor profile.', 'danger');
+        });
+      }
+      if (logoFile) {
+        var reader = new FileReader();
+        reader.onload = function () {
+          data.logoBase64 = reader.result; data.logoFileName = logoFile.name; data.logoMimeType = logoFile.type;
+          finish();
+        };
+        reader.readAsDataURL(logoFile);
+      } else {
+        finish();
+      }
+    }
+
+    // ---------- Sidebar & view routing ----------
+
+    // Mobile nav (<=900px, incl. iOS Safari): the sidebar sits off-screen via
+    // CSS (.yc-sidebar { left: -260px }) and slides in on ".open". These are
+    // the only way to add/remove that class, wired to the hamburger button
+    // and the backdrop; without them the sidebar has no way to open on
+    // narrow/mobile viewports since it isn't shown inline there.
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebarBackdrop').classList.toggle('open');
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarBackdrop').classList.remove('open');
+    }
+
+    var NAV_ITEMS_ = {
+      'Super Admin': [
+        { view: 'dashboard', icon: 'bi-grid-1x2-fill', label: 'Dashboard' },
+        { view: 'schools', icon: 'bi-mortarboard-fill', label: 'Schools' },
+        { view: 'users', icon: 'bi-people-fill', label: 'Users' },
+        { view: 'events', icon: 'bi-calendar-event-fill', label: 'Events' },
+        { view: 'exchange', icon: 'bi-arrow-left-right', label: 'Exchange Programs' },
+        { view: 'content', icon: 'bi-collection-play-fill', label: 'Content Library' },
+        { view: 'evaluations', icon: 'bi-clipboard-check-fill', label: 'Evaluations' },
+        { view: 'vendors', icon: 'bi-shop', label: 'Vendors' },
+        { view: 'requirements', icon: 'bi-clipboard2-check-fill', label: 'Requirements' },
+        { comingSoon: true, icon: 'bi-megaphone-fill', label: 'Promotions' },
+        { view: 'notifications', icon: 'bi-bell-fill', label: 'Notifications' }
+      ],
+      'School Admin': [
+        { view: 'dashboard', icon: 'bi-grid-1x2-fill', label: 'Dashboard' },
+        { view: 'myschool', icon: 'bi-mortarboard-fill', label: 'My School' },
+        { view: 'selfeval', icon: 'bi-clipboard-data-fill', label: 'Self Evaluation' },
+        { view: 'events', icon: 'bi-calendar-event-fill', label: 'Events' },
+        { view: 'exchange', icon: 'bi-arrow-left-right', label: 'Exchange Programs' },
+        { view: 'content', icon: 'bi-collection-play-fill', label: 'Content Library' },
+        { view: 'vendors', icon: 'bi-shop', label: 'Vendors' },
+        { view: 'requirements', icon: 'bi-clipboard2-check-fill', label: 'Requirements' },
+        { view: 'notifications', icon: 'bi-bell-fill', label: 'Notifications' }
+      ],
+      'Teacher': [
+        { view: 'dashboard', icon: 'bi-grid-1x2-fill', label: 'Dashboard' },
+        { view: 'events', icon: 'bi-calendar-event-fill', label: 'Events' },
+        { view: 'exchange', icon: 'bi-arrow-left-right', label: 'Exchange Programs' },
+        { view: 'content', icon: 'bi-collection-play-fill', label: 'Content Library' },
+        { view: 'notifications', icon: 'bi-bell-fill', label: 'Notifications' }
+      ],
+      'Student': [
+        { view: 'dashboard', icon: 'bi-grid-1x2-fill', label: 'Dashboard' },
+        { view: 'content', icon: 'bi-collection-play-fill', label: 'Content Library' },
+        { view: 'notifications', icon: 'bi-bell-fill', label: 'Notifications' }
+      ],
+      'Vendor': [
+        { view: 'dashboard', icon: 'bi-grid-1x2-fill', label: 'Dashboard' },
+        { view: 'mylisting', icon: 'bi-shop', label: 'My Listing' },
+        { view: 'vendorenquiries', icon: 'bi-envelope-fill', label: 'Enquiries' },
+        { view: 'requirements', icon: 'bi-clipboard2-check-fill', label: 'School Requirements' },
+        { view: 'notifications', icon: 'bi-bell-fill', label: 'Notifications' }
+      ],
+      'Evaluator': [
+        { view: 'dashboard', icon: 'bi-grid-1x2-fill', label: 'Dashboard' },
+        { view: 'evaluations', icon: 'bi-clipboard-check-fill', label: 'Evaluations' },
+        { view: 'notifications', icon: 'bi-bell-fill', label: 'Notifications' }
+      ]
+    };
+
+    function buildSidebar(role) {
+      var items = NAV_ITEMS_[role] || NAV_ITEMS_['Teacher'];
+      var nav = document.getElementById('sidebarNav');
+      nav.innerHTML = '';
+      items.forEach(function (item) {
+        var a = document.createElement('a');
+        a.className = 'yc-nav-link';
+        a.setAttribute('data-view', item.view || '');
+        a.innerHTML = '<i class="bi ' + item.icon + '"></i> ' + item.label;
+        if (item.comingSoon) {
+          a.onclick = function () { closeSidebar(); YC.toast(item.label + ' is coming in a later build phase.', 'dark'); };
+        } else {
+          a.onclick = function () { closeSidebar(); switchView(item.view); };
+        }
+        nav.appendChild(a);
+      });
+    }
+
+    var VIEW_TITLES_ = {
+      dashboard: 'Dashboard', schools: 'Schools', users: 'Users',
+      myschool: 'My School', notifications: 'Notifications',
+      events: 'Events', exchange: 'Exchange Programs', content: 'Content Library',
+      selfeval: 'Self Evaluation', evaluations: 'Evaluations',
+      vendors: 'Vendors', mylisting: 'My Listing', vendorenquiries: 'Enquiries'
+    };
+
+    function switchView(viewName) {
+      document.querySelectorAll('.yc-view').forEach(function (el) {
+        el.classList.toggle('d-none', el.id !== 'view-' + viewName);
+      });
+      document.querySelectorAll('#sidebarNav .yc-nav-link').forEach(function (el) {
+        el.classList.toggle('active', el.getAttribute('data-view') === viewName);
+      });
+      document.getElementById('topbarTitle').textContent = VIEW_TITLES_[viewName] || 'Dashboard';
+
+      if (viewName === 'dashboard') loadDashboard();
+      if (viewName === 'schools') loadSchools();
+      if (viewName === 'users') loadUsers();
+      if (viewName === 'myschool') loadMySchool();
+      if (viewName === 'notifications') loadNotifications();
+      if (viewName === 'events') loadEvents();
+      if (viewName === 'exchange') loadExchanges();
+      if (viewName === 'content') loadContentLibrary();
+      if (viewName === 'selfeval') loadSelfEvaluation();
+      if (viewName === 'evaluations') loadEvaluationsList();
+      if (viewName === 'vendors') loadVendorsView();
+      if (viewName === 'mylisting') loadMyVendorListing();
+      if (viewName === 'vendorenquiries') loadVendorEnquiries();
+      if (viewName === 'requirements') loadRequirementsList();
+    }
+
+    // ---------- Dashboard ----------
+
+    function loadDashboard() {
+      YC.authedCall('getDashboardStats').then(function (res) {
+        if (!res.success) { YC.toast(res.message, 'danger'); return; }
+        renderDashboardStats(res.data);
+      }).catch(function () { /* non-critical */ });
+    }
+
+    function statCard(label, value) {
+      return '<div class="col-6 col-md-3"><div class="yc-stat-card"><div class="value">' + value + '</div><div class="label">' + label + '</div></div></div>';
+    }
+
+    function renderDashboardStats(data) {
+      var row = document.getElementById('dashboardStatsRow');
+      if (currentUser.role === 'Super Admin') {
+        row.innerHTML =
+          statCard('Total Schools', data.totalSchools) +
+          statCard('Active Schools', data.activeSchools) +
+          statCard('Expired Memberships', data.expiredMemberships) +
+          statCard('Total Users', data.totalUsers) +
+          statCard('Total Vendors', data.totalVendors) +
+          statCard('Pending Vendor Approvals', data.pendingVendorApprovals) +
+          statCard('Total Revenue', '₹' + Number(data.totalRevenue).toLocaleString('en-IN')) +
+          statCard('New Registrations (7d)', data.newRegistrations);
+      } else if (currentUser.role === 'School Admin') {
+        if (!data.hasSchool) { row.innerHTML = ''; return; }
+        row.innerHTML =
+          statCard('Membership', data.school.Membership_Status || '—') +
+          statCard('Days to Expiry', data.daysToMembershipExpiry === null ? '—' : data.daysToMembershipExpiry) +
+          statCard('Teachers', data.teacherCount) +
+          statCard('Students', data.studentCount);
+      } else if (currentUser.role === 'Evaluator') {
+        row.innerHTML =
+          statCard('Total Submitted', data.totalSubmitted) +
+          statCard('Awaiting Review', data.awaitingReview) +
+          statCard('Under Review', data.underReview) +
+          statCard('Completed', data.completed);
+      } else if (currentUser.role === 'Vendor') {
+        row.innerHTML =
+          statCard('Listing Status', data.vendor ? data.vendor.Status : '—') +
+          statCard('Total Enquiries', data.enquiryCount);
+      } else {
+        row.innerHTML = '';
+      }
+    }
+
+    // ---------- Schools (Super Admin) ----------
+
+    var schoolSearchTimer;
+    function debounceLoadSchools() {
+      clearTimeout(schoolSearchTimer);
+      schoolSearchTimer = setTimeout(loadSchools, 350);
+    }
+
+    function loadSchools() {
+      var keyword = document.getElementById('schoolSearchInput').value;
+      YC.authedCall('getAllSchools', { keyword: keyword }).then(function (res) {
+        if (!res.success) { YC.toast(res.message, 'danger'); return; }
+        renderSchoolsTable(res.data);
+      });
+    }
+
+    function statusBadge(status) {
+      var cls = 'badge-status-pending'; // covers Draft, Pending Approval, Under Review, etc.
+      if (['Active', 'Published', 'Open', 'Matched', 'Completed'].indexOf(status) !== -1) cls = 'badge-status-active';
+      else if (status === 'Suspended' || status === 'Rejected') cls = 'badge-status-suspended';
+      else if (status === 'Expired') cls = 'badge-status-expired';
+      return '<span class="badge ' + cls + '">' + YC.escapeHtml(status || '—') + '</span>';
+    }
+
+    /** Formats an ISO date/datetime string as a short human date (e.g. "Sep 20, 2026"). */
+    function formatDateOnly_(value) {
+      if (!value) return '';
+      var d = new Date(value);
+      if (isNaN(d.getTime())) return String(value);
+      return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function renderSchoolsTable(schools) {
+      var body = document.getElementById('schoolsTableBody');
+      if (!schools.length) { body.innerHTML = '<tr><td colspan="5" class="text-muted text-center py-4">No schools found.</td></tr>'; return; }
+      body.innerHTML = '';
+      schools.forEach(function (s) {
+        var tr = document.createElement('tr');
+        // A school can end up Active (approved) while its membership fields
+        // never got activated — e.g. if Status was edited directly in the
+        // Sheet instead of via the "Approve" button, which is the only
+        // place that normally starts the one-year membership. Surface that
+        // mismatch here with a one-click repair rather than requiring a
+        // manual Sheet edit.
+        var membershipMismatch = s.Status === 'Active' && s.Membership_Status !== 'Active';
+        tr.innerHTML =
+          '<td>' + YC.escapeHtml(s.School_Name) + '</td>' +
+          '<td>' + YC.escapeHtml(s.City) + '</td>' +
+          '<td>' + YC.escapeHtml(s.Membership_Tier || '—') +
+          (s.Membership_Expiry_Date ? '<div class="text-muted small">Valid until ' + formatDateOnly_(s.Membership_Expiry_Date) + '</div>' : '') +
+          (membershipMismatch ? '<div class="text-danger small">Membership: ' + YC.escapeHtml(s.Membership_Status || 'Pending') + '</div>' : '') +
+          '</td>' +
+          '<td>' + statusBadge(s.Status) + '</td>' +
+          '<td class="text-end">' +
+          (s.Status === 'Pending Approval' ? '<button class="btn btn-sm btn-yc-primary me-1" onclick="setSchoolStatusUi(\'' + s.School_ID + '\',\'Active\')">Approve</button>' : '') +
+          (membershipMismatch ? '<button class="btn btn-sm btn-yc-gold me-1" onclick="fixMembershipUi(\'' + s.School_ID + '\')">Fix Membership</button>' : '') +
+          '<button class="btn btn-sm btn-outline-secondary me-1" onclick="openEditMembershipDates(\'' + s.School_ID + '\',\'' + YC.escapeHtml(s.School_Name) + '\',\'' + (s.Membership_Start_Date || '') + '\',\'' + (s.Membership_Expiry_Date || '') + '\')">Edit Dates</button>' +
+          (s.Status === 'Active' ? '<button class="btn btn-sm btn-outline-danger" onclick="setSchoolStatusUi(\'' + s.School_ID + '\',\'Suspended\')">Suspend</button>' : '') +
+          (s.Status === 'Suspended' ? '<button class="btn btn-sm btn-outline-secondary" onclick="setSchoolStatusUi(\'' + s.School_ID + '\',\'Active\')">Reactivate</button>' : '') +
+          '</td>';
+        body.appendChild(tr);
+      });
+    }
+
+    function setSchoolStatusUi(schoolId, status) {
+      YC.authedCall('setSchoolStatus', schoolId, status).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        loadSchools();
+      });
+    }
+
+    // Repairs a school that's Active but whose membership never got
+    // switched on (see the comment in renderSchoolsTable). Starts a
+    // standard one-year membership from today, same as a normal approval.
+    function fixMembershipUi(schoolId) {
+      YC.authedCall('manuallyRenewMembership', schoolId, 365).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        loadSchools();
+      });
+    }
+
+    var emdSchoolId_ = '';
+    // Date inputs need plain "YYYY-MM-DD"; the sheet stores a full ISO
+    // timestamp, so trim it down to what <input type="date"> accepts.
+    function toDateInputValue_(isoString) {
+      if (!isoString) return '';
+      var d = new Date(isoString);
+      if (isNaN(d.getTime())) return '';
+      return d.toISOString().slice(0, 10);
+    }
+
+    function openEditMembershipDates(schoolId, schoolName, startDate, expiryDate) {
+      emdSchoolId_ = schoolId;
+      document.getElementById('emdSchoolName').textContent = schoolName;
+      document.getElementById('emdStartDate').value = toDateInputValue_(startDate);
+      document.getElementById('emdExpiryDate').value = toDateInputValue_(expiryDate);
+      new bootstrap.Modal(document.getElementById('editMembershipDatesModal')).show();
+    }
+
+    function submitEditMembershipDates() {
+      var startDate = document.getElementById('emdStartDate').value;
+      var expiryDate = document.getElementById('emdExpiryDate').value;
+      if (!startDate && !expiryDate) { YC.toast('Set at least one date.', 'danger'); return; }
+      YC.showLoading();
+      YC.authedCall('setMembershipDates', emdSchoolId_, startDate, expiryDate).then(function (res) {
+        YC.hideLoading();
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        if (res.success) {
+          bootstrap.Modal.getInstance(document.getElementById('editMembershipDatesModal')).hide();
+          loadSchools();
+        }
+      }).catch(function (err) {
+        YC.hideLoading();
+        YC.toast(err && err.message ? err.message : 'Could not update dates.', 'danger');
+      });
+    }
+
+    // ---------- Users (Super Admin) ----------
+
+    var userSearchTimer;
+    function debounceLoadUsers() {
+      clearTimeout(userSearchTimer);
+      userSearchTimer = setTimeout(loadUsers, 350);
+    }
+
+    function loadUsers() {
+      var role = document.getElementById('userRoleFilter').value;
+      var keyword = document.getElementById('userSearchInput').value;
+      YC.authedCall('getAllUsers', { role: role, keyword: keyword }).then(function (res) {
+        if (!res.success) { YC.toast(res.message, 'danger'); return; }
+        renderUsersTable(res.data);
+      });
+    }
+
+    function renderUsersTable(users) {
+      var body = document.getElementById('usersTableBody');
+      if (!users.length) { body.innerHTML = '<tr><td colspan="6" class="text-muted text-center py-4">No users found.</td></tr>'; return; }
+      body.innerHTML = '';
+      users.forEach(function (u) {
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td>' + YC.escapeHtml(u.firstName + ' ' + u.lastName) + '</td>' +
+          '<td>' + YC.escapeHtml(u.email) + '</td>' +
+          '<td>' + YC.escapeHtml(u.role) + '</td>' +
+          '<td>' + YC.escapeHtml(u.schoolName || '—') + '</td>' +
+          '<td>' + statusBadge(u.status) + '</td>' +
+          '<td class="text-end">' +
+          '<button class="btn btn-sm btn-outline-' + (u.status === 'Active' ? 'danger' : 'secondary') + '" onclick="toggleUserStatus(\'' + u.userId + '\',\'' + u.status + '\')">' +
+          (u.status === 'Active' ? 'Deactivate' : 'Activate') + '</button></td>';
+        body.appendChild(tr);
+      });
+    }
+
+    function toggleUserStatus(userId, currentStatus) {
+      var newStatus = currentStatus === 'Active' ? 'Suspended' : 'Active';
+      YC.authedCall('setUserStatus', userId, newStatus).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        loadUsers();
+      });
+    }
+
+    // ---------- My School (School Admin) ----------
+
+    var activeInviteRole = null;
+
+    function loadMySchool() {
+      if (!currentUser.schoolId) return;
+      YC.authedCall('getSchoolById', currentUser.schoolId).then(function (res) {
+        if (!res.success) { YC.toast(res.message, 'danger'); return; }
+        renderMySchoolCard(res.data);
+      });
+      YC.authedCall('getMySchoolUsers').then(function (res) {
+        if (!res.success) return;
+        renderSchoolUsersTable(res.data);
+      });
+    }
+
+    function renderMySchoolCard(school) {
+      var pendingNote = school.Status === 'Pending Approval'
+        ? '<div class="alert alert-warning mt-3 mb-0">Your registration is awaiting Super Admin approval. Once approved, your membership will be active for one year — no payment needed.</div>'
+        : '';
+      document.getElementById('mySchoolCard').innerHTML =
+        '<div class="d-flex justify-content-between align-items-start">' +
+        '<div><h5 class="fw-bold mb-1">' + YC.escapeHtml(school.School_Name) + '</h5>' +
+        '<p class="text-muted mb-1">' + YC.escapeHtml(school.City) + ', ' + YC.escapeHtml(school.State) + ' &middot; ' + YC.escapeHtml(school.Board_Affiliation) + '</p>' +
+        '<p class="text-muted mb-0">Contact: ' + YC.escapeHtml(school.Contact_Email) + '</p></div>' +
+        '<div class="text-end">' + statusBadge(school.Membership_Status) +
+        '<div class="text-muted small mt-1">' + YC.escapeHtml(school.Membership_Tier || '') +
+        (school.Membership_Expiry_Date ? '<br>Valid until ' + new Date(school.Membership_Expiry_Date).toDateString() : '') +
+        '</div></div></div>' + pendingNote;
+    }
+
+    function renderSchoolUsersTable(users) {
+      var body = document.getElementById('schoolUsersTableBody');
+      if (!users.length) { body.innerHTML = '<tr><td colspan="4" class="text-muted text-center py-4">No teachers or students yet. Invite some above.</td></tr>'; return; }
+      body.innerHTML = '';
+      users.forEach(function (u) {
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td>' + YC.escapeHtml(u.firstName + ' ' + u.lastName) + '</td>' +
+          '<td>' + YC.escapeHtml(u.email) + '</td>' +
+          '<td>' + YC.escapeHtml(u.role) + '</td>' +
+          '<td>' + statusBadge(u.emailVerified ? 'Active' : 'Pending Approval') + '</td>';
+        body.appendChild(tr);
+      });
+    }
+
+    function openInvite(role) {
+      activeInviteRole = role;
+      document.getElementById('inviteRoleBadge').textContent = 'Inviting: ' + role;
+      document.getElementById('inviteFormBox').classList.remove('d-none');
+    }
+
+    function sendMyInvite() {
+      var email = document.getElementById('inviteEmailInput').value;
+      if (!email) { YC.toast('Enter an email address.', 'danger'); return; }
+      YC.authedCall('sendInvitation', { email: email, role: activeInviteRole }).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        if (res.success) {
+          document.getElementById('inviteEmailInput').value = '';
+          document.getElementById('inviteFormBox').classList.add('d-none');
+        }
+      });
+    }
+
+    // ---------- Notifications ----------
+
+    function loadNotifications() {
+      YC.authedCall('getMyNotifications').then(function (res) {
+        if (!res.success) { YC.toast(res.message, 'danger'); return; }
+        renderNotifications(res.data.notifications);
+      });
+    }
+
+    function renderNotifications(notifications) {
+      var container = document.getElementById('notificationsList');
+      if (!notifications.length) { container.innerHTML = '<p class="text-muted mb-0">No notifications yet.</p>'; return; }
+      container.innerHTML = '';
+      notifications.forEach(function (n) {
+        var item = document.createElement('div');
+        item.className = 'd-flex justify-content-between align-items-start border-bottom py-3';
+        item.innerHTML =
+          '<div>' +
+          '<div class="fw-semibold">' + YC.escapeHtml(n.Title) + (n.Is_Read ? '' : ' <span class="badge bg-primary ms-1">New</span>') + '</div>' +
+          '<div class="text-muted small">' + YC.escapeHtml(n.Message) + '</div>' +
+          '<div class="text-muted" style="font-size:0.75rem;">' + new Date(n.Created_Date).toLocaleString() + '</div></div>' +
+          (n.Is_Read ? '' : '<button class="btn btn-sm btn-link" onclick="markRead(\'' + n.Notification_ID + '\', this)">Mark read</button>');
+        container.appendChild(item);
+      });
+    }
+
+    function markRead(notificationId, btnEl) {
+      YC.authedCall('markNotificationRead', notificationId).then(function () {
+        loadNotifications();
+      });
+    }
+
+    // ==================== EVENTS ====================
+
+    var myRegistrations_ = {}; // eventId -> registration object
+
+    function toggleEventCreatePanel() {
+      var el = document.getElementById('eventCreatePanel');
+      var isSuperAdmin = currentUser.role === 'Super Admin';
+      document.getElementById('evPublishNowWrap').style.display = isSuperAdmin ? 'block' : 'none';
+      document.getElementById('evApprovalNoticeWrap').style.display = isSuperAdmin ? 'none' : 'block';
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    (function wireEventCoverPreview() {
+      var input = document.getElementById('evCoverFile');
+      if (!input) return;
+      input.addEventListener('change', function () {
+        var file = input.files && input.files[0];
+        var preview = document.getElementById('evCoverPreview');
+        if (!file) { preview.style.display = 'none'; preview.src = ''; return; }
+        var reader = new FileReader();
+        reader.onload = function () { preview.src = reader.result; preview.style.display = 'inline-block'; };
+        reader.readAsDataURL(file);
+      });
+    })();
+
+    // Shared helper: resolve a <input type="file"> element to a {base64,
+    // fileName, mimeType} payload, or null if no file was chosen.
+    function readFileInput_(inputEl, resizeToMax) {
+      return new Promise(function (resolve) {
+        var file = inputEl.files && inputEl.files[0];
+        if (!file) { resolve(null); return; }
+        var reader = new FileReader();
+        reader.onload = function () {
+          var original = { base64: reader.result, fileName: file.name, mimeType: file.type };
+          if (!resizeToMax || file.type.indexOf('image/') !== 0) { resolve(original); return; }
+          // Shrink big photos to a web-sized JPEG: faster to upload and show.
+          // If the browser can't decode it (e.g. HEIC), upload it unchanged.
+          var img = new Image();
+          img.onload = function () {
+            try {
+              var scale = Math.min(1, resizeToMax / Math.max(img.width, img.height));
+              var canvas = document.createElement('canvas');
+              canvas.width = Math.round(img.width * scale);
+              canvas.height = Math.round(img.height * scale);
+              var ctx = canvas.getContext('2d');
+              ctx.fillStyle = '#ffffff';
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              resolve({ base64: canvas.toDataURL('image/jpeg', 0.85), fileName: file.name.replace(/\.[^.]+$/, '') + '.jpg', mimeType: 'image/jpeg' });
+            } catch (e) { resolve(original); }
+          };
+          img.onerror = function () { resolve(original); };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function submitCreateEvent() {
+      var data = {
+        title: document.getElementById('evTitle').value,
+        eventType: document.getElementById('evType').value,
+        format: document.getElementById('evFormat').value,
+        startDate: document.getElementById('evStart').value,
+        endDate: document.getElementById('evEnd').value,
+        capacity: document.getElementById('evCapacity').value,
+        venue: document.getElementById('evVenue').value,
+        meetingLink: document.getElementById('evVenue').value,
+        speaker: document.getElementById('evSpeaker').value,
+        registrationFee: document.getElementById('evFee').value,
+        description: document.getElementById('evDescription').value,
+        materialsType: document.getElementById('evMaterialsType').value,
+        materialsUrl: document.getElementById('evMaterialsUrl').value
+      };
+      if (!data.title || !data.startDate) { YC.toast('Title and start date are required.', 'danger'); return; }
+      // Only Super Admin can ever publish an event — a School Admin's submission
+      // always goes to Pending Approval regardless of this checkbox, so we only
+      // honor it when Super Admin is the one creating.
+      var publishNow = currentUser.role === 'Super Admin' && document.getElementById('evPublishNow').checked;
+      YC.showLoading();
+
+      var coverInput = document.getElementById('evCoverFile');
+      var materialsInput = document.getElementById('evMaterialsFile');
+      Promise.all([readFileInput_(coverInput, 900), readFileInput_(materialsInput)]).then(function (files) {
+        var cover = files[0], materials = files[1];
+        if (cover) { data.coverBase64 = cover.base64; data.coverFileName = cover.fileName; data.coverMimeType = cover.mimeType; }
+        if (materials) { data.materialsBase64 = materials.base64; data.materialsFileName = materials.fileName; data.materialsMimeType = materials.mimeType; }
+
+        return YC.authedCall('createEvent', data).then(function (res) {
+          if (!res.success) { YC.hideLoading(); YC.toast(res.message, 'danger'); return; }
+          if (publishNow) {
+            return YC.authedCall('setEventStatus', res.data.eventId, 'Published').then(function (pubRes) {
+              YC.hideLoading();
+              YC.toast(pubRes.success ? 'Event created and published — it\'s now live for registration.' : pubRes.message, pubRes.success ? 'success' : 'danger');
+              toggleEventCreatePanel();
+              clearEventForm();
+              loadEvents();
+            });
+          }
+          YC.hideLoading();
+          YC.toast(res.message, 'success');
+          toggleEventCreatePanel();
+          clearEventForm();
+          loadEvents();
+        });
+      }).catch(function (err) {
+        YC.hideLoading();
+        YC.toast(err && err.message ? err.message : 'Could not create event.', 'danger');
+      });
+    }
+
+    function clearEventForm() {
+      ['evTitle', 'evStart', 'evEnd', 'evVenue', 'evSpeaker', 'evDescription', 'evMaterialsUrl'].forEach(function (id) { document.getElementById(id).value = ''; });
+      document.getElementById('evCapacity').value = '50';
+      document.getElementById('evFee').value = '0';
+      document.getElementById('evMaterialsType').value = '';
+      document.getElementById('evCoverFile').value = '';
+      document.getElementById('evMaterialsFile').value = '';
+      var preview = document.getElementById('evCoverPreview');
+      preview.style.display = 'none'; preview.src = '';
+    }
+
+    function loadEvents() {
+      YC.authedCall('listEvents', {}).then(function (res) {
+        if (!res.success) { YC.toast(res.message, 'danger'); return; }
+        document.getElementById('eventCreateToggleBtn').style.display = (currentUser.role === 'Super Admin' || currentUser.role === 'School Admin') ? 'inline-block' : 'none';
+        if (currentUser.role === 'Super Admin' || currentUser.role === 'School Admin' || currentUser.role === 'Teacher' || currentUser.role === 'Student') {
+          YC.authedCall('listMyRegistrations').then(function (regRes) {
+            myRegistrations_ = {};
+            if (regRes.success) regRes.data.forEach(function (r) { if (r.Status !== 'Cancelled') myRegistrations_[r.Event_ID] = r; });
+            renderEventsList(res.data);
+          }).catch(function () { renderEventsList(res.data); });
+        } else {
+          renderEventsList(res.data);
+        }
+      }).catch(function (err) {
+        document.getElementById('eventsList').innerHTML =
+          '<div class="alert alert-danger">Could not load events: ' + (err && err.message ? YC.escapeHtml(err.message) : 'Unknown error') +
+          '. If this persists, check that Events.gs has been added to the Apps Script project.</div>';
+      });
+    }
+
+    // Posters are fetched through the backend as data: URIs. Linking straight
+    // to Drive works in Chrome but Safari (Mac/iOS) blocks it, which showed up
+    // as broken images. Cached so re-rendering the list doesn't refetch.
+    var eventImageCache_ = {};
+
+    function loadEventPosters_() {
+      var imgs = Array.prototype.slice.call(document.querySelectorAll('img[data-event-poster]'));
+      var queue = imgs.slice();
+      function setImg(img, src) {
+        if (!src) return;
+        img.onerror = function () { img.style.display = 'none'; img.parentNode.insertAdjacentHTML('beforeend', '<i class="bi bi-image"></i>'); };
+        img.src = src;
+        img.style.display = 'block';
+        img.parentNode.classList.add('loaded');
+        var ph = img.parentNode.querySelector('.bi'); if (ph) ph.style.display = 'none';
+      }
+      function next() {
+        var img = queue.shift();
+        if (!img) return;
+        var id = img.getAttribute('data-event-poster');
+        if (eventImageCache_[id]) { setImg(img, eventImageCache_[id]); next(); return; }
+        YC.authedCall('getEventCoverImage', id).then(function (res) {
+          var src = res.success && res.data ? (res.data.dataUrl || res.data.fallbackUrl) : '';
+          if (src) { eventImageCache_[id] = src; setImg(img, src); }
+        }).catch(function () {}).then(next);
+      }
+      next(); next(); next(); // three at a time
+    }
+
+    function isEventCompleted_(ev) {
+      if (ev.Status === 'Archived') return true;
+      var end = new Date(ev.End_Date || ev.Start_Date);
+      if (isNaN(end.getTime())) return false;
+      end.setHours(23, 59, 59, 999);
+      return end < new Date();
+    }
+
+    function buildEventCard_(ev) {
+      var card = document.createElement('div');
+      var needsAttention = ev.Status === 'Draft' || ev.Status === 'Pending Approval';
+      card.className = 'yc-panel yc-event-card' + (needsAttention ? ' border-warning' : '');
+      if (needsAttention) card.style.borderWidth = '2px';
+      var myReg = myRegistrations_[ev.Event_ID];
+      var isSuperAdmin = currentUser.role === 'Super Admin';
+      var isOwner = !!ev.isMine;
+      var completed = isEventCompleted_(ev);
+
+      var actionsHtml = '';
+      if (isSuperAdmin) {
+        actionsHtml =
+          (ev.Status === 'Draft' ? '<button class="btn btn-sm btn-yc-primary me-1" onclick="setEventStatusUi(\'' + ev.Event_ID + '\',\'Published\')">Publish</button>' : '') +
+          (ev.Status === 'Pending Approval' ?
+            '<button class="btn btn-sm btn-yc-primary me-1" onclick="setEventStatusUi(\'' + ev.Event_ID + '\',\'Published\')">Approve &amp; Publish</button>' +
+            '<button class="btn btn-sm btn-outline-danger me-1" onclick="setEventStatusUi(\'' + ev.Event_ID + '\',\'Rejected\')">Reject</button>' : '') +
+          (ev.Status === 'Published' ? '<button class="btn btn-sm btn-outline-secondary me-1" onclick="setEventStatusUi(\'' + ev.Event_ID + '\',\'Archived\')">Archive</button>' : '');
+      } else if (isOwner && ev.Status !== 'Published') {
+        actionsHtml = statusBadge(ev.Status);
+      } else if (ev.Status === 'Published') {
+        if (myReg) {
+          actionsHtml = '<span class="badge ' + (myReg.Status === 'Waitlisted' ? 'badge-status-pending' : 'badge-status-active') + ' me-2">' + myReg.Status + '</span>' +
+            (completed ? '' : '<button class="btn btn-sm btn-outline-danger" onclick="cancelRegistrationUi(\'' + myReg.Registration_ID + '\')">Cancel</button>');
+        } else if (completed) {
+          actionsHtml = '<span class="badge bg-secondary">Registration closed</span>';
+        } else {
+          actionsHtml = '<button class="btn btn-sm btn-yc-primary" onclick="registerEventUi(\'' + ev.Event_ID + '\')">Register (' + ev.Available_Seats + ' seats left)</button>';
+        }
+      }
+
+      var showBadge = isSuperAdmin || (isOwner && ev.Status !== 'Published');
+
+      var posterHtml = '<div class="yc-event-poster">' +
+        (ev.Cover_Image_URL ? '<img data-event-poster="' + YC.escapeHtml(ev.Event_ID) + '" alt="" style="display:none;">' : '') +
+        '<i class="bi bi-image"></i></div>';
+
+      var materialsHtml = ev.Materials_URL
+        ? '<a href="' + YC.escapeHtml(ev.Materials_URL) + '" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary mt-1">' +
+          '<i class="bi bi-link-45deg"></i> Click here to access materials' + (ev.Materials_Type ? ' (' + YC.escapeHtml(ev.Materials_Type) + ')' : '') + '</a>'
+        : '';
+
+      card.innerHTML =
+        posterHtml +
+        '<div class="yc-event-body">' +
+        '<h6 class="fw-bold mb-1">' + YC.escapeHtml(ev.Title) + (showBadge ? ' ' + statusBadge(ev.Status) : '') + '</h6>' +
+        '<div class="text-muted small mb-1">' + YC.escapeHtml(ev.Event_Type) + ' &middot; ' + YC.escapeHtml(ev.Format) + '</div>' +
+        '<div class="text-muted small mb-2"><i class="bi bi-calendar-event"></i> ' + new Date(ev.Start_Date).toLocaleString() + '</div>' +
+        '<p class="mb-2">' + YC.escapeHtml(ev.Description) + '</p>' + materialsHtml +
+        '</div>' +
+        '<div class="yc-event-actions">' + actionsHtml + '</div>' +
+        buildCommentsToggleHtml('ev-' + ev.Event_ID);
+      return card;
+    }
+
+    function renderEventsList(events) {
+      var container = document.getElementById('eventsList');
+      if (!events.length) { container.innerHTML = '<p class="text-muted">No events yet.</p>'; return; }
+      container.innerHTML = '';
+
+      // Newest first, oldest last, inside each section.
+      var sorted = events.slice().sort(function (a, b) { return new Date(b.Start_Date) - new Date(a.Start_Date); });
+      var upcoming = sorted.filter(function (e) { return !isEventCompleted_(e); });
+      var completed = sorted.filter(isEventCompleted_);
+
+      [['Upcoming Events', upcoming, 'No upcoming events.'], ['Completed Events', completed, 'No completed events yet.']].forEach(function (sec) {
+        var h = document.createElement('h6');
+        h.className = 'fw-bold mt-3 mb-2';
+        h.textContent = sec[0] + ' (' + sec[1].length + ')';
+        container.appendChild(h);
+        if (!sec[1].length) {
+          var p = document.createElement('p'); p.className = 'text-muted'; p.textContent = sec[2];
+          container.appendChild(p);
+          return;
+        }
+        var grid = document.createElement('div');
+        grid.className = 'yc-event-grid';
+        sec[1].forEach(function (ev) {
+          grid.appendChild(buildEventCard_(ev));
+        });
+        container.appendChild(grid);
+        sec[1].forEach(function (ev) { wireCommentsToggle('ev-' + ev.Event_ID, null, ev.Event_ID); });
+      });
+      loadEventPosters_();
+    }
+
+    function setEventStatusUi(eventId, status) {
+      YC.authedCall('setEventStatus', eventId, status).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        loadEvents();
+      });
+    }
+
+    function registerEventUi(eventId) {
+      YC.authedCall('registerForEvent', eventId).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        loadEvents();
+      });
+    }
+
+    function cancelRegistrationUi(registrationId) {
+      YC.authedCall('cancelRegistration', registrationId).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        loadEvents();
+      });
+    }
+
+    // ==================== EXCHANGE PROGRAMS ====================
+
+    function toggleExchangeCreatePanel() {
+      var el = document.getElementById('exchangeCreatePanel');
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function submitCreateExchange() {
+      var data = {
+        exchangeType: document.getElementById('exType').value,
+        subject: document.getElementById('exSubject').value,
+        grade: document.getElementById('exGrade').value,
+        duration: document.getElementById('exDuration').value,
+        objectives: document.getElementById('exObjectives').value,
+        description: document.getElementById('exDescription').value
+      };
+      if (!data.subject || !data.description) { YC.toast('Subject and description are required.', 'danger'); return; }
+      YC.authedCall('createExchange', data).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        if (res.success) { toggleExchangeCreatePanel(); loadExchanges(); }
+      });
+    }
+
+    function loadExchanges() {
+      document.getElementById('exchangeCreateToggleBtn').style.display = (currentUser.role === 'School Admin' || currentUser.role === 'Super Admin') ? 'inline-block' : 'none';
+      YC.authedCall('listExchanges', {}).then(function (res) {
+        if (!res.success) { YC.toast(res.message, 'danger'); return; }
+        renderExchangesList(res.data);
+      }).catch(function (err) {
+        document.getElementById('exchangesList').innerHTML =
+          '<div class="alert alert-danger">Could not load exchange programs: ' + (err && err.message ? YC.escapeHtml(err.message) : 'Unknown error') +
+          '. If this persists, check that ExchangePrograms.gs has been added to the Apps Script project.</div>';
+      });
+    }
+
+    function renderExchangesList(exchanges) {
+      var container = document.getElementById('exchangesList');
+      if (!exchanges.length) { container.innerHTML = '<p class="text-muted">No exchange opportunities yet.</p>'; return; }
+      container.innerHTML = '';
+      exchanges.forEach(function (ex) {
+        var card = document.createElement('div');
+        var needsAttention = ex.Status === 'Pending Approval';
+        card.className = 'yc-panel' + (needsAttention ? ' border-warning' : '');
+        if (needsAttention) card.style.borderWidth = '2px';
+        var actions = '';
+        if (currentUser.role === 'Super Admin' && ex.Status === 'Pending Approval') {
+          actions = '<button class="btn btn-sm btn-yc-primary me-1" onclick="setExchangeApprovalUi(\'' + ex.Exchange_ID + '\', true)">Approve</button>' +
+            '<button class="btn btn-sm btn-outline-danger" onclick="setExchangeApprovalUi(\'' + ex.Exchange_ID + '\', false)">Reject</button>';
+        } else if (ex.isMine) {
+          actions = statusBadge(ex.Status) +
+            (ex.Status === 'Under Review' ? ' <button class="btn btn-sm btn-outline-secondary ms-2" onclick="viewExchangeApplications(\'' + ex.Exchange_ID + '\', this)">View Applications</button>' : '') +
+            (ex.Status === 'Matched' ? ' <button class="btn btn-sm btn-outline-secondary ms-2" onclick="markExchangeCompletedUi(\'' + ex.Exchange_ID + '\')">Mark Completed</button>' : '');
+        } else if (ex.Status === 'Open' && currentUser.role === 'School Admin') {
+          actions = '<button class="btn btn-sm btn-yc-primary" onclick="applyToExchangeUi(\'' + ex.Exchange_ID + '\')">Apply</button>';
+        } else if (currentUser.role === 'Super Admin') {
+          actions = statusBadge(ex.Status); // oversight view of another school's posting
+        }
+        card.innerHTML =
+          '<div class="d-flex justify-content-between align-items-start">' +
+          '<div><h6 class="fw-bold mb-1">' + YC.escapeHtml(ex.Subject) + ' <span class="text-muted small fw-normal">(' + YC.escapeHtml(ex.Exchange_Type) + ')</span></h6>' +
+          '<div class="text-muted small mb-1">' + YC.escapeHtml(ex.schoolName) + ' &middot; Grade ' + YC.escapeHtml(ex.Grade || '—') + ' &middot; ' + YC.escapeHtml(ex.Duration || '—') + '</div>' +
+          '<p class="mb-1">' + YC.escapeHtml(ex.Description) + '</p></div>' +
+          '<div class="text-end">' + actions + '</div></div>' +
+          '<div id="exApplications-' + ex.Exchange_ID + '" class="mt-2"></div>';
+        container.appendChild(card);
+      });
+    }
+
+    function setExchangeApprovalUi(exchangeId, approve) {
+      YC.authedCall('setExchangeApprovalStatus', exchangeId, approve).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        loadExchanges();
+      });
+    }
+
+    function applyToExchangeUi(exchangeId) {
+      var message = prompt('Add a short message to your application (optional):') || '';
+      YC.authedCall('applyToExchange', exchangeId, message).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        loadExchanges();
+      });
+    }
+
+    function viewExchangeApplications(exchangeId, btnEl) {
+      YC.authedCall('listApplicationsForExchange', exchangeId).then(function (res) {
+        if (!res.success) { YC.toast(res.message, 'danger'); return; }
+        var box = document.getElementById('exApplications-' + exchangeId);
+        if (!res.data.length) { box.innerHTML = '<p class="text-muted small mb-0">No applications yet.</p>'; return; }
+        box.innerHTML = res.data.map(function (a) {
+          return '<div class="border-top pt-2 mt-2 d-flex justify-content-between align-items-center">' +
+            '<div><div class="fw-semibold small">' + YC.escapeHtml(a.applicantSchoolName) + '</div>' +
+            '<div class="text-muted small">' + YC.escapeHtml(a.Message || '') + '</div>' +
+            '<div class="text-muted small">Status: ' + YC.escapeHtml(a.Status) + ' &middot; Host approved: ' + (a.Host_Admin_Approval ? 'Yes' : 'No') + '</div></div>' +
+            (a.Status !== 'Matched' ? '<button class="btn btn-sm btn-yc-primary" onclick="approveExchangeApplicationUi(\'' + a.Application_ID + '\', \'' + exchangeId + '\')">Approve</button>' : '') +
+            '</div>';
+        }).join('');
+      });
+    }
+
+    function approveExchangeApplicationUi(applicationId, exchangeId) {
+      YC.authedCall('approveExchangeApplication', applicationId).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        loadExchanges();
+      });
+    }
+
+    function markExchangeCompletedUi(exchangeId) {
+      YC.authedCall('markExchangeCompleted', exchangeId).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        loadExchanges();
+      });
+    }
+
+    // ==================== CONTENT LIBRARY ====================
+
+    function toggleContentCreatePanel() {
+      var el = document.getElementById('contentCreatePanel');
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function submitCreateContent() {
+      var data = {
+        title: document.getElementById('cnTitle').value,
+        contentType: document.getElementById('cnType').value,
+        category: document.getElementById('cnCategory').value,
+        mediaUrl: document.getElementById('cnMediaUrl').value,
+        eventDate: document.getElementById('cnEventDate').value,
+        earlyYearsOnly: document.getElementById('cnEarlyYears').checked,
+        description: document.getElementById('cnDescription').value,
+        fullContent: document.getElementById('cnFullContent').value
+      };
+      if (!data.title) { YC.toast('Title is required.', 'danger'); return; }
+      YC.authedCall('createContent', data).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        if (res.success) { toggleContentCreatePanel(); loadContentLibrary(); }
+      });
+    }
+
+    var contentSearchTimer;
+    function debounceLoadContent() {
+      clearTimeout(contentSearchTimer);
+      contentSearchTimer = setTimeout(loadContentLibrary, 350);
+    }
+
+    function loadContentLibrary() {
+      document.getElementById('contentCreateToggleBtn').style.display = currentUser.role === 'Super Admin' ? 'inline-block' : 'none';
+      var filters = {
+        contentType: document.getElementById('contentTypeFilter').value,
+        keyword: document.getElementById('contentSearchInput').value
+      };
+      YC.authedCall('listContent', filters).then(function (res) {
+        if (!res.success) { YC.toast(res.message, 'danger'); return; }
+        renderContentList(res.data);
+      }).catch(function (err) {
+        document.getElementById('contentList').innerHTML =
+          '<div class="col-12"><div class="alert alert-danger">Could not load content: ' + (err && err.message ? YC.escapeHtml(err.message) : 'Unknown error') +
+          '. If this persists, check that Content.gs has been added to the Apps Script project.</div></div>';
+      });
+    }
+
+    function renderContentList(items) {
+      var container = document.getElementById('contentList');
+      if (!items.length) { container.innerHTML = '<p class="text-muted">No content found.</p>'; return; }
+      container.innerHTML = '';
+      items.forEach(function (c) {
+        var col = document.createElement('div');
+        col.className = 'col-md-6';
+        var isAdmin = currentUser.role === 'Super Admin';
+        var actions = isAdmin
+          ? (c.Status === 'Draft' ? '<button class="btn btn-sm btn-yc-primary me-1" onclick="setContentStatusUi(\'' + c.Content_ID + '\',\'Published\')">Publish</button>' : '') +
+            (c.Status === 'Published' ? '<button class="btn btn-sm btn-outline-secondary me-1" onclick="setContentStatusUi(\'' + c.Content_ID + '\',\'Archived\')">Archive</button>' : '')
+          : '<button class="btn btn-sm btn-outline-secondary" onclick="toggleBookmarkUi(\'' + c.Content_ID + '\', this)">☆ Bookmark</button>';
+
+        col.innerHTML =
+          '<div class="yc-panel h-100">' +
+          '<div class="d-flex justify-content-between align-items-start">' +
+          '<div><h6 class="fw-bold mb-1">' + YC.escapeHtml(c.Title) + (isAdmin ? ' ' + statusBadge(c.Status) : '') + '</h6>' +
+          '<div class="text-muted small mb-1">' + YC.escapeHtml(c.Content_Type) + (c.Category ? ' &middot; ' + YC.escapeHtml(c.Category) : '') + (c.Event_Date ? ' &middot; Event date: ' + YC.escapeHtml(formatDateOnly_(c.Event_Date)) : '') + (c.Early_Years_Only ? ' &middot; <span class="text-warning">Early Years</span>' : '') + '</div>' +
+          '<p class="mb-2">' + YC.escapeHtml(c.Description) + '</p>' +
+          (c.Media_URL ? '<a href="' + c.Media_URL + '" target="_blank" class="yc-link small">Open media</a>' : '') + '</div>' +
+          '<div class="text-end">' + actions + '</div></div>' +
+          buildCommentsToggleHtml('cn-' + c.Content_ID) + '</div>';
+        container.appendChild(col);
+        wireCommentsToggle('cn-' + c.Content_ID, c.Content_ID, null);
+      });
+    }
+
+    function setContentStatusUi(contentId, status) {
+      YC.authedCall('setContentStatus', contentId, status).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        loadContentLibrary();
+      });
+    }
+
+    function toggleBookmarkUi(contentId, btnEl) {
+      var isBookmarked = btnEl.textContent.indexOf('★') !== -1;
+      var call = isBookmarked ? 'removeBookmark' : 'bookmarkContent';
+      YC.authedCall(call, contentId).then(function (res) {
+        if (res.success) btnEl.innerHTML = isBookmarked ? '☆ Bookmark' : '★ Bookmarked';
+      });
+    }
+
+    // ==================== SHARED: COMMENTS THREAD ====================
+
+    function buildCommentsToggleHtml(key) {
+      return '<div class="mt-3 pt-2 border-top">' +
+        '<button class="btn btn-sm btn-link ps-0" onclick="toggleComments(\'' + key + '\')" id="commentsToggle-' + key + '">💬 Comments</button>' +
+        '<div class="d-none" id="commentsBox-' + key + '">' +
+        '<div id="commentsThread-' + key + '" class="mb-2"></div>' +
+        '<div class="d-flex gap-2"><input class="form-control form-control-sm" placeholder="Add a comment..." id="commentInput-' + key + '">' +
+        '<button class="btn btn-sm btn-yc-primary" onclick="postCommentUi(\'' + key + '\')">Post</button></div>' +
+        '</div></div>';
+    }
+
+    var commentsTargets_ = {}; // key -> {contentId, eventId}
+
+    function wireCommentsToggle(key, contentId, eventId) {
+      commentsTargets_[key] = { contentId: contentId, eventId: eventId };
+    }
+
+    function toggleComments(key) {
+      var box = document.getElementById('commentsBox-' + key);
+      var wasHidden = box.classList.contains('d-none');
+      box.classList.toggle('d-none');
+      if (wasHidden) loadCommentsThread(key);
+    }
+
+    function loadCommentsThread(key) {
+      var target = commentsTargets_[key];
+      YC.authedCall('listComments', target.contentId, target.eventId).then(function (res) {
+        if (!res.success) return;
+        var thread = document.getElementById('commentsThread-' + key);
+        if (!res.data.length) { thread.innerHTML = '<p class="text-muted small mb-0">No comments yet — be the first!</p>'; return; }
+        thread.innerHTML = res.data.map(function (c) {
+          return '<div class="border-bottom py-2">' +
+            '<div class="small fw-semibold">' + YC.escapeHtml(c.userName) + (c.Is_Pinned ? ' 📌' : '') +
+            ' <span class="text-muted fw-normal">' + YC.escapeHtml(c.userRole) + (c.schoolName ? ' · ' + YC.escapeHtml(c.schoolName) : '') + '</span></div>' +
+            '<div class="small">' + YC.escapeHtml(c.Comment) + '</div>' +
+            '<div class="text-muted" style="font-size:0.72rem;">' + new Date(c.Created_Date).toLocaleString() + ' &middot; 👍 ' + (c.Likes_Count || 0) +
+            ' <a href="#" onclick="likeCommentUi(\'' + c.Comment_ID + '\', \'' + key + '\'); return false;" class="ms-1">Like</a>' +
+            (currentUser.role === 'Super Admin' ? ' &middot; <a href="#" onclick="pinCommentUi(\'' + c.Comment_ID + '\', ' + !c.Is_Pinned + ', \'' + key + '\'); return false;">' + (c.Is_Pinned ? 'Unpin' : 'Pin') + '</a>' +
+              ' &middot; <a href="#" class="text-danger" onclick="deleteCommentUi(\'' + c.Comment_ID + '\', \'' + key + '\'); return false;">Delete</a>' : '') +
+            '</div></div>';
+        }).join('');
+      });
+    }
+
+    function postCommentUi(key) {
+      var target = commentsTargets_[key];
+      var input = document.getElementById('commentInput-' + key);
+      if (!input.value.trim()) return;
+      YC.authedCall('addComment', { contentId: target.contentId, eventId: target.eventId, comment: input.value }).then(function (res) {
+        if (!res.success) { YC.toast(res.message, 'danger'); return; }
+        input.value = '';
+        loadCommentsThread(key);
+      });
+    }
+
+    function likeCommentUi(commentId, key) {
+      YC.authedCall('likeComment', commentId).then(function () { loadCommentsThread(key); });
+    }
+
+    function pinCommentUi(commentId, pinned, key) {
+      YC.authedCall('pinComment', commentId, pinned).then(function () { loadCommentsThread(key); });
+    }
+
+    function deleteCommentUi(commentId, key) {
+      YC.authedCall('deleteComment', commentId).then(function () { loadCommentsThread(key); });
+    }
+
+    // ==================== SELF EVALUATION ====================
+
+    var GRADE_LIST_ = ['Early Years', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6',
+      'Grade 7', 'Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12'];
+
+    var EVAL_DOMAINS_ = [
+      { key: 'studentEngagement', label: 'Student Engagement' },
+      { key: 'teachingApproach', label: 'Teaching Approach' },
+      { key: 'assessmentQuality', label: 'Assessment Quality' },
+      { key: 'classroomEnvironment', label: 'Classroom Environment' },
+      { key: 'teachingQuality', label: 'Teaching Quality' },
+      { key: 'teacherDevelopment', label: 'Teacher Development & Support' },
+      { key: 'leadershipDirection', label: 'Leadership & Direction' },
+      { key: 'schoolCulturePeople', label: 'School Culture & People' },
+      { key: 'administrationOperations', label: 'Administration & Operations' },
+      { key: 'admissionsFamily', label: 'Admissions & Family Experience' }
+    ];
+
+    var EVAL_FIELD_GROUPS_ = {
+      schoolInfo: [
+        { key: 'schoolName', label: 'School Name' }, { key: 'location', label: 'Location' },
+        { key: 'board', label: 'Board / Curriculum' }, { key: 'yearEstablished', label: 'Year Established' },
+        { key: 'managementTrust', label: 'Management / Trust' }, { key: 'principal', label: 'Principal / Head of School' },
+        { key: 'evaluationCoordinator', label: 'Evaluation Coordinator' }, { key: 'contactEmail', label: 'Contact Email' },
+        { key: 'contactNumber', label: 'Contact Number' }, { key: 'gradesOffered', label: 'Grades Offered' }
+      ],
+      schoolStructure: [
+        { key: 'totalGrades', label: 'Total Number of Grades' }, { key: 'totalSections', label: 'Total Number of Sections' },
+        { key: 'totalStudents', label: 'Total Student Strength' }, { key: 'totalTeachingStaff', label: 'Total Teaching Staff' },
+        { key: 'totalNonTeachingStaff', label: 'Total Non-Teaching Staff' }, { key: 'academicLeaders', label: 'Number of Academic Leaders / Coordinators' }
+      ],
+      staffProfile: [
+        { key: 'totalTeachers', label: 'Total Number of Teachers' }, { key: 'teachersLt2yrs', label: 'Teachers with <2 years experience' },
+        { key: 'avgExperience', label: 'Average teacher experience' }, { key: 'attritionPct', label: 'Teacher attrition last year (%)' },
+        { key: 'attendancePct', label: 'Teacher attendance (%)' }, { key: 'joinedThisYear', label: 'Teachers who joined this year' }
+      ],
+      studentData: [
+        { key: 'attendancePct', label: 'Student attendance (%)' }, { key: 'attritionPct', label: 'Student attrition (%)' },
+        { key: 'additionalSupport', label: 'Students requiring additional support' },
+        { key: 'disciplineIncidents', label: 'Major discipline incidents last year' },
+        { key: 'leadershipOpportunities', label: 'Student leadership opportunities available' }
+      ],
+      professionalLearning: [
+        { key: 'observationsConducted', label: 'Classroom observations conducted last year' },
+        { key: 'observedPct', label: 'Teachers observed at least once (%)' },
+        { key: 'pdSessions', label: 'PD sessions conducted' }, { key: 'avgPdHours', label: 'Average PD hours per teacher' },
+        { key: 'inductionProgramme', label: 'Induction programme for new teachers', type: 'yesno' },
+        { key: 'mentoringSystem', label: 'Teacher mentoring system', type: 'yesno' },
+        { key: 'wellbeingProgramme', label: 'Student wellbeing programme', type: 'yesno' },
+        { key: 'studentCouncil', label: 'Student council / leadership programme', type: 'yesno' },
+        { key: 'parentSurvey', label: 'Parent satisfaction survey conducted', type: 'yesno' }
+      ]
+    };
+
+    var evalState_ = {}; // full evaluation object currently loaded
+    var EVAL_READONLY_ = false;
+
+    function fieldInputHtml(prefix, field, value) {
+      var id = prefix + '-' + field.key;
+      if (field.type === 'yesno') {
+        return '<div class="col-md-6 mb-2"><label class="form-label">' + field.label + '</label>' +
+          '<select class="form-select" id="' + id + '" ' + (EVAL_READONLY_ ? 'disabled' : '') + '>' +
+          '<option value="">Select...</option>' +
+          '<option ' + (value === 'Yes' ? 'selected' : '') + '>Yes</option>' +
+          '<option ' + (value === 'No' ? 'selected' : '') + '>No</option></select></div>';
+      }
+      return '<div class="col-md-6 mb-2"><label class="form-label">' + field.label + '</label>' +
+        '<input class="form-control" id="' + id + '" value="' + YC.escapeHtml(value || '') + '" ' + (EVAL_READONLY_ ? 'disabled' : '') + '></div>';
+    }
+
+    function renderFieldGroup(prefix, fields, data) {
+      return '<div class="row">' + fields.map(function (f) { return fieldInputHtml(prefix, f, data[f.key]); }).join('') + '</div>';
+    }
+
+    function collectFieldGroup(prefix, fields) {
+      var out = {};
+      fields.forEach(function (f) { out[f.key] = document.getElementById(prefix + '-' + f.key).value; });
+      return out;
+    }
+
+    function renderGradeDistributionTable(data) {
+      var rows = GRADE_LIST_.map(function (grade, i) {
+        var g = data[grade] || {};
+        return '<tr><td>' + grade + '</td>' +
+          '<td><input class="form-control form-control-sm" id="grade-' + i + '-sections" value="' + YC.escapeHtml(g.sections || '') + '" ' + (EVAL_READONLY_ ? 'disabled' : '') + '></td>' +
+          '<td><input class="form-control form-control-sm" id="grade-' + i + '-students" value="' + YC.escapeHtml(g.students || '') + '" ' + (EVAL_READONLY_ ? 'disabled' : '') + '></td>' +
+          '<td><input class="form-control form-control-sm" id="grade-' + i + '-avgClassSize" value="' + YC.escapeHtml(g.avgClassSize || '') + '" ' + (EVAL_READONLY_ ? 'disabled' : '') + '></td></tr>';
+      }).join('');
+      return '<table class="table table-sm"><thead><tr><th>Grade</th><th>Sections</th><th>Students</th><th>Avg Class Size</th></tr></thead><tbody>' + rows + '</tbody></table>';
+    }
+
+    function collectGradeDistribution() {
+      var out = {};
+      GRADE_LIST_.forEach(function (grade, i) {
+        out[grade] = {
+          sections: document.getElementById('grade-' + i + '-sections').value,
+          students: document.getElementById('grade-' + i + '-students').value,
+          avgClassSize: document.getElementById('grade-' + i + '-avgClassSize').value
+        };
+      });
+      return out;
+    }
+
+    function renderDomainBlock(domain, data, evaluationId, showComments) {
+      var d = data[domain.key] || {};
+      var ratingButtons = [1, 2, 3, 4].map(function (n) {
+        var checked = Number(d.rating) === n ? 'checked' : '';
+        return '<div class="form-check form-check-inline">' +
+          '<input class="form-check-input" type="radio" name="rating-' + domain.key + '" id="rating-' + domain.key + '-' + n + '" value="' + n + '" ' + checked + ' ' + (EVAL_READONLY_ ? 'disabled' : '') + '>' +
+          '<label class="form-check-label" for="rating-' + domain.key + '-' + n + '">' + n + '</label></div>';
+      }).join('');
+
+      var html = '<div class="yc-panel mb-3">' +
+        '<h6 class="fw-bold mb-2">' + domain.label + '</h6>' +
+        '<div class="mb-2">' + ratingButtons + '</div>' +
+        '<div class="mb-2"><label class="form-label small">What is working well?</label>' +
+        '<textarea class="form-control" rows="2" id="domain-' + domain.key + '-workingWell" ' + (EVAL_READONLY_ ? 'disabled' : '') + '>' + YC.escapeHtml(d.workingWell || '') + '</textarea></div>' +
+        '<div class="mb-2"><label class="form-label small">What remains challenging?</label>' +
+        '<textarea class="form-control" rows="2" id="domain-' + domain.key + '-challenging" ' + (EVAL_READONLY_ ? 'disabled' : '') + '>' + YC.escapeHtml(d.challenging || '') + '</textarea></div>' +
+        '<div class="mb-2"><label class="form-label small">Evidence available</label>' +
+        '<textarea class="form-control" rows="2" id="domain-' + domain.key + '-evidence" ' + (EVAL_READONLY_ ? 'disabled' : '') + '>' + YC.escapeHtml(d.evidence || '') + '</textarea></div>';
+
+      if (showComments) {
+        html += '<div class="mt-3 pt-2 border-top">' + buildEvalCommentsHtml(domain.key, evaluationId) + '</div>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function collectDomainScores() {
+      var out = {};
+      EVAL_DOMAINS_.forEach(function (d) {
+        var ratingEl = document.querySelector('input[name="rating-' + d.key + '"]:checked');
+        out[d.key] = {
+          rating: ratingEl ? ratingEl.value : '',
+          workingWell: document.getElementById('domain-' + d.key + '-workingWell').value,
+          challenging: document.getElementById('domain-' + d.key + '-challenging').value,
+          evidence: document.getElementById('domain-' + d.key + '-evidence').value
+        };
+      });
+      return out;
+    }
+
+    function renderSelfEvalFormHtml(data, evaluationId, showComments) {
+      var html = '';
+      html += '<div class="yc-panel mb-3"><h6 class="fw-bold mb-3">Part A1 — School Information</h6>' + renderFieldGroup('si', EVAL_FIELD_GROUPS_.schoolInfo, data.schoolInfo) + '</div>';
+      html += '<div class="yc-panel mb-3"><h6 class="fw-bold mb-3">Part A2 — School Structure</h6>' + renderFieldGroup('ss', EVAL_FIELD_GROUPS_.schoolStructure, data.schoolStructure) + '</div>';
+      html += '<div class="yc-panel mb-3"><h6 class="fw-bold mb-3">Part A3 — Grade-wise Distribution</h6>' + renderGradeDistributionTable(data.gradeDistribution) + '</div>';
+      html += '<div class="yc-panel mb-3"><h6 class="fw-bold mb-3">Part A4 — Staff Profile</h6>' + renderFieldGroup('sp', EVAL_FIELD_GROUPS_.staffProfile, data.staffProfile) + '</div>';
+      html += '<div class="yc-panel mb-3"><h6 class="fw-bold mb-3">Part A5 — Student Data</h6>' + renderFieldGroup('sd', EVAL_FIELD_GROUPS_.studentData, data.studentData) + '</div>';
+      html += '<div class="yc-panel mb-3"><h6 class="fw-bold mb-3">Part A6 — Professional Learning & School Systems</h6>' + renderFieldGroup('pl', EVAL_FIELD_GROUPS_.professionalLearning, data.professionalLearning) + '</div>';
+
+      html += '<h5 class="fw-bold mt-4 mb-3">Part B — Self Evaluation (score 1–4 per domain)</h5>';
+      EVAL_DOMAINS_.forEach(function (d) { html += renderDomainBlock(d, data.domainScores || {}, evaluationId, showComments); });
+
+      var pr = data.priorities || {};
+      html += '<div class="yc-panel mb-3"><h6 class="fw-bold mb-3">Part D — School Priorities</h6>' +
+        '<label class="form-label small">Top priority 1</label><input class="form-control mb-2" id="pr-priority1" value="' + YC.escapeHtml(pr.priority1 || '') + '" ' + (EVAL_READONLY_ ? 'disabled' : '') + '>' +
+        '<label class="form-label small">Top priority 2</label><input class="form-control mb-2" id="pr-priority2" value="' + YC.escapeHtml(pr.priority2 || '') + '" ' + (EVAL_READONLY_ ? 'disabled' : '') + '>' +
+        '<label class="form-label small">Top priority 3</label><input class="form-control mb-2" id="pr-priority3" value="' + YC.escapeHtml(pr.priority3 || '') + '" ' + (EVAL_READONLY_ ? 'disabled' : '') + '>' +
+        '<label class="form-label small">Greatest challenges</label><textarea class="form-control mb-2" id="pr-challenges" ' + (EVAL_READONLY_ ? 'disabled' : '') + '>' + YC.escapeHtml(pr.challenges || '') + '</textarea>' +
+        '<label class="form-label small">Support wanted from Yaara evaluation process</label><textarea class="form-control" id="pr-support" ' + (EVAL_READONLY_ ? 'disabled' : '') + '>' + YC.escapeHtml(pr.support || '') + '</textarea></div>';
+
+      var fr = data.finalReflection || {};
+      html += '<div class="yc-panel mb-3"><h6 class="fw-bold mb-3">Part E — Final Reflection</h6>' +
+        '<label class="form-label small">Greatest strength 1</label><input class="form-control mb-2" id="fr-strength1" value="' + YC.escapeHtml(fr.strength1 || '') + '" ' + (EVAL_READONLY_ ? 'disabled' : '') + '>' +
+        '<label class="form-label small">Greatest strength 2</label><input class="form-control mb-2" id="fr-strength2" value="' + YC.escapeHtml(fr.strength2 || '') + '" ' + (EVAL_READONLY_ ? 'disabled' : '') + '>' +
+        '<label class="form-label small">Greatest strength 3</label><input class="form-control mb-2" id="fr-strength3" value="' + YC.escapeHtml(fr.strength3 || '') + '" ' + (EVAL_READONLY_ ? 'disabled' : '') + '>' +
+        '<label class="form-label small">Area to strengthen 1</label><input class="form-control mb-2" id="fr-growth1" value="' + YC.escapeHtml(fr.growth1 || '') + '" ' + (EVAL_READONLY_ ? 'disabled' : '') + '>' +
+        '<label class="form-label small">Area to strengthen 2</label><input class="form-control mb-2" id="fr-growth2" value="' + YC.escapeHtml(fr.growth2 || '') + '" ' + (EVAL_READONLY_ ? 'disabled' : '') + '>' +
+        '<label class="form-label small">Area to strengthen 3</label><input class="form-control mb-2" id="fr-growth3" value="' + YC.escapeHtml(fr.growth3 || '') + '" ' + (EVAL_READONLY_ ? 'disabled' : '') + '>' +
+        '<label class="form-label small">Anything else you\'d like us to know?</label><textarea class="form-control" id="fr-anythingElse" ' + (EVAL_READONLY_ ? 'disabled' : '') + '>' + YC.escapeHtml(fr.anythingElse || '') + '</textarea></div>';
+
+      if (!EVAL_READONLY_) {
+        html += '<div class="yc-panel mb-3"><h6 class="fw-bold mb-3">Declaration</h6>' +
+          '<label class="form-label small">Principal / Head of School (typed name as signature)</label>' +
+          '<input class="form-control mb-2" id="decl-name" value="' + YC.escapeHtml(data.declarationName || '') + '">' +
+          '<label class="form-label small">Date</label>' +
+          '<input class="form-control" type="date" id="decl-date" value="' + YC.escapeHtml(data.declarationDate || '') + '"></div>';
+      }
+
+      if (showComments) {
+        html += '<div class="yc-panel mb-3"><h6 class="fw-bold mb-3">General Comments</h6>' + buildEvalCommentsHtml('', evaluationId) + '</div>';
+      }
+
+      return html;
+    }
+
+    // ---------- School Admin side ----------
+
+    function loadSelfEvaluation() {
+      EVAL_READONLY_ = false;
+      YC.authedCall('getMyEvaluation').then(function (res) {
+        if (!res.success) { YC.toast(res.message, 'danger'); return; }
+        evalState_ = res.data;
+        var statusLine = document.getElementById('selfEvalStatusLine');
+        statusLine.innerHTML = 'Status: ' + statusBadge(res.data.status) +
+          (res.data.submittedDate ? ' &middot; submitted ' + new Date(res.data.submittedDate).toLocaleDateString() : '');
+        document.getElementById('selfEvalForm').innerHTML = renderSelfEvalFormHtml(evalState_, evalState_.evaluationId, true);
+      }).catch(function (err) {
+        document.getElementById('selfEvalForm').innerHTML = '<div class="alert alert-danger">Could not load evaluation: ' + (err && err.message ? YC.escapeHtml(err.message) : 'Unknown error') + '</div>';
+      });
+    }
+
+    function collectSelfEvalPayload() {
+      return {
+        schoolInfo: collectFieldGroup('si', EVAL_FIELD_GROUPS_.schoolInfo),
+        schoolStructure: collectFieldGroup('ss', EVAL_FIELD_GROUPS_.schoolStructure),
+        gradeDistribution: collectGradeDistribution(),
+        staffProfile: collectFieldGroup('sp', EVAL_FIELD_GROUPS_.staffProfile),
+        studentData: collectFieldGroup('sd', EVAL_FIELD_GROUPS_.studentData),
+        professionalLearning: collectFieldGroup('pl', EVAL_FIELD_GROUPS_.professionalLearning),
+        domainScores: collectDomainScores(),
+        priorities: {
+          priority1: document.getElementById('pr-priority1').value, priority2: document.getElementById('pr-priority2').value,
+          priority3: document.getElementById('pr-priority3').value, challenges: document.getElementById('pr-challenges').value,
+          support: document.getElementById('pr-support').value
+        },
+        finalReflection: {
+          strength1: document.getElementById('fr-strength1').value, strength2: document.getElementById('fr-strength2').value,
+          strength3: document.getElementById('fr-strength3').value, growth1: document.getElementById('fr-growth1').value,
+          growth2: document.getElementById('fr-growth2').value, growth3: document.getElementById('fr-growth3').value,
+          anythingElse: document.getElementById('fr-anythingElse').value
+        },
+        declarationName: document.getElementById('decl-name').value,
+        declarationDate: document.getElementById('decl-date').value
+      };
+    }
+
+    function collectSelfEvalPayloadSafe_() {
+      try {
+        return collectSelfEvalPayload();
+      } catch (e) {
+        YC.toast('The form hasn\'t finished loading yet — please wait a moment and try again, or reload the page.', 'danger');
+        return null;
+      }
+    }
+
+    function saveSelfEvaluation() {
+      var payload = collectSelfEvalPayloadSafe_();
+      if (!payload) return;
+      YC.showLoading();
+      YC.authedCall('saveEvaluationDraft', payload).then(function (res) {
+        YC.hideLoading();
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+      }).catch(function (err) {
+        YC.hideLoading();
+        YC.toast(err && err.message ? err.message : 'Could not save.', 'danger');
+      });
+    }
+
+    function submitSelfEvaluation() {
+      var payload = collectSelfEvalPayloadSafe_();
+      if (!payload) return;
+      YC.showLoading();
+      YC.authedCall('saveEvaluationDraft', payload).then(function (saveRes) {
+        if (!saveRes.success) { YC.hideLoading(); YC.toast(saveRes.message, 'danger'); return; }
+        return YC.authedCall('submitEvaluation').then(function (res) {
+          YC.hideLoading();
+          YC.toast(res.message, res.success ? 'success' : 'danger');
+          if (res.success) loadSelfEvaluation();
+        });
+      }).catch(function (err) {
+        YC.hideLoading();
+        YC.toast(err && err.message ? err.message : 'Could not submit.', 'danger');
+      });
+    }
+
+    // ---------- Evaluator / Super Admin side ----------
+
+    var evaluatorsList_ = [];
+
+    function loadEvaluationsList() {
+      document.getElementById('evaluationDetailPanel').classList.add('d-none');
+      document.getElementById('evaluationsListPanel').classList.remove('d-none');
+      var isSuperAdmin = currentUser.role === 'Super Admin';
+
+      var evaluatorsReady = isSuperAdmin
+        ? YC.authedCall('listEvaluators').then(function (r) { evaluatorsList_ = r.success ? r.data : []; })
+        : Promise.resolve();
+
+      evaluatorsReady.then(function () {
+        return YC.authedCall('listEvaluationsForEvaluators', {});
+      }).then(function (res) {
+        if (!res.success) { YC.toast(res.message, 'danger'); return; }
+        var container = document.getElementById('evaluationsList');
+        if (!res.data.length) { container.innerHTML = '<p class="text-muted mb-0">No submissions yet.</p>'; return; }
+        container.innerHTML = res.data.map(function (e) {
+          var assignHtml = isSuperAdmin
+            ? '<select class="form-select form-select-sm d-inline-block w-auto ms-2" onchange="assignEvaluatorUi(\'' + e.evaluationId + '\', this.value)">' +
+              '<option value="">Unassigned</option>' +
+              evaluatorsList_.map(function (ev) {
+                return '<option value="' + ev.userId + '"' + (ev.userId === e.assignedEvaluatorId ? ' selected' : '') + '>' + YC.escapeHtml(ev.name) + '</option>';
+              }).join('') +
+              '</select>'
+            : (e.assignedEvaluatorName ? '<span class="text-muted small ms-2">Assigned to you</span>' : '');
+          return '<div class="d-flex justify-content-between align-items-center border-bottom py-3 flex-wrap gap-2">' +
+            '<div><div class="fw-semibold">' + YC.escapeHtml(e.schoolName) + '</div>' +
+            '<div class="text-muted small">Submitted ' + new Date(e.submittedDate).toLocaleDateString() + '</div></div>' +
+            '<div class="d-flex align-items-center">' + statusBadge(e.status) + assignHtml +
+            ' <button class="btn btn-sm btn-yc-primary ms-2" onclick="openEvaluationDetail(\'' + e.evaluationId + '\')">Review</button></div></div>';
+        }).join('');
+      }).catch(function (err) {
+        document.getElementById('evaluationsList').innerHTML = '<div class="alert alert-danger">Could not load evaluations: ' + (err && err.message ? YC.escapeHtml(err.message) : 'Unknown error') + '</div>';
+      });
+    }
+
+    function assignEvaluatorUi(evaluationId, evaluatorUserId) {
+      YC.authedCall('assignEvaluator', evaluationId, evaluatorUserId).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        if (!res.success) loadEvaluationsList(); // revert the dropdown to actual state
+      });
+    }
+
+    function openEvaluationDetail(evaluationId) {
+      EVAL_READONLY_ = true;
+      YC.authedCall('getEvaluationById', evaluationId).then(function (res) {
+        if (!res.success) { YC.toast(res.message, 'danger'); return; }
+        evalState_ = res.data;
+        document.getElementById('evaluationsListPanel').classList.add('d-none');
+        var panel = document.getElementById('evaluationDetailPanel');
+        panel.classList.remove('d-none');
+        panel.innerHTML =
+          '<div class="yc-panel mb-3 d-flex justify-content-between align-items-center">' +
+          '<div><h5 class="fw-bold mb-1">' + YC.escapeHtml(evalState_.schoolName) + '</h5>' +
+          '<p class="text-muted mb-0">' + statusBadge(evalState_.status) + '</p></div>' +
+          '<div><button class="btn btn-outline-secondary me-2" onclick="loadEvaluationsList()">&larr; Back to list</button>' +
+          (evalState_.status === 'Submitted' ? '<button class="btn btn-outline-secondary me-2" onclick="setEvalStatusUi(\'' + evaluationId + '\',\'Under Review\')">Mark Under Review</button>' : '') +
+          (evalState_.status !== 'Completed' ? '<button class="btn btn-yc-primary" onclick="setEvalStatusUi(\'' + evaluationId + '\',\'Completed\')">Mark Completed</button>' : '') +
+          '</div></div>' +
+          renderSelfEvalFormHtml(evalState_, evaluationId, true);
+      }).catch(function (err) {
+        YC.toast(err && err.message ? err.message : 'Could not load evaluation.', 'danger');
+      });
+    }
+
+    function setEvalStatusUi(evaluationId, status) {
+      YC.authedCall('setEvaluationStatus', evaluationId, status).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        if (res.success) openEvaluationDetail(evaluationId);
+      });
+    }
+
+    // ---------- Evaluation comments (per-domain + general) ----------
+
+    function buildEvalCommentsHtml(domainKey, evaluationId) {
+      var safeKey = domainKey || 'general';
+      return '<button class="btn btn-sm btn-link ps-0" onclick="toggleEvalComments(\'' + safeKey + '\', \'' + evaluationId + '\')">💬 Comments / Requests</button>' +
+        '<div class="d-none" id="evalCommentsBox-' + safeKey + '">' +
+        '<div id="evalCommentsThread-' + safeKey + '" class="mb-2"></div>' +
+        (currentUser.role === 'Evaluator' || currentUser.role === 'Super Admin'
+          ? '<div class="d-flex gap-2 mb-2 flex-wrap"><input class="form-control form-control-sm" placeholder="Add a comment..." id="evalCommentInput-' + safeKey + '">' +
+            '<button class="btn btn-sm btn-outline-secondary" onclick="postEvalComment(\'' + domainKey + '\', \'' + evaluationId + '\', \'Visit_Comment\')">Post Comment</button>' +
+            '<button class="btn btn-sm btn-outline-danger" onclick="postEvalComment(\'' + domainKey + '\', \'' + evaluationId + '\', \'Info_Request\')">Request More Info</button></div>'
+          : '<div class="d-flex gap-2 mb-2"><input class="form-control form-control-sm" placeholder="Reply..." id="evalCommentInput-' + safeKey + '">' +
+            '<button class="btn btn-sm btn-yc-primary" onclick="postEvalComment(\'' + domainKey + '\', \'' + evaluationId + '\', \'School_Response\')">Reply</button></div>') +
+        '</div>';
+    }
+
+    function toggleEvalComments(safeKey, evaluationId) {
+      var box = document.getElementById('evalCommentsBox-' + safeKey);
+      var wasHidden = box.classList.contains('d-none');
+      box.classList.toggle('d-none');
+      if (wasHidden) loadEvalCommentsThread(safeKey, evaluationId);
+    }
+
+    function loadEvalCommentsThread(safeKey, evaluationId) {
+      YC.authedCall('listEvaluationComments', evaluationId).then(function (res) {
+        if (!res.success) return;
+        var domainKey = safeKey === 'general' ? '' : safeKey;
+        var filtered = res.data.filter(function (c) { return (c.Domain_Key || '') === domainKey; });
+        var thread = document.getElementById('evalCommentsThread-' + safeKey);
+        if (!filtered.length) { thread.innerHTML = '<p class="text-muted small mb-0">No comments yet.</p>'; return; }
+        thread.innerHTML = filtered.map(function (c) {
+          var typeLabel = { Visit_Comment: 'Visit comment', General_Comment: 'General comment', Info_Request: 'Info requested', School_Response: 'School reply' }[c.Comment_Type] || c.Comment_Type;
+          var badgeClass = c.Comment_Type === 'Info_Request' ? (c.Status === 'Resolved' ? 'badge-status-active' : 'badge-status-pending') : 'badge-status-active';
+          return '<div class="border-bottom py-2">' +
+            '<div class="small"><span class="badge ' + badgeClass + '">' + typeLabel + (c.Status ? ' · ' + c.Status : '') + '</span> ' +
+            '<strong>' + YC.escapeHtml(c.authorName) + '</strong> <span class="text-muted">(' + YC.escapeHtml(c.authorRole) + ')</span></div>' +
+            '<div class="small">' + YC.escapeHtml(c.Comment) + '</div>' +
+            '<div class="text-muted" style="font-size:0.72rem;">' + new Date(c.Created_Date).toLocaleString() +
+            (c.Comment_Type === 'Info_Request' && c.Status === 'Open' && (currentUser.role === 'Evaluator' || currentUser.role === 'Super Admin')
+              ? ' &middot; <a href="#" onclick="resolveInfoRequestUi(\'' + c.Comment_ID + '\', \'' + safeKey + '\', \'' + evaluationId + '\'); return false;">Mark resolved</a>' : '') +
+            '</div></div>';
+        }).join('');
+      });
+    }
+
+    function postEvalComment(domainKey, evaluationId, commentType) {
+      var safeKey = domainKey || 'general';
+      var input = document.getElementById('evalCommentInput-' + safeKey);
+      if (!input.value.trim()) return;
+      YC.authedCall('addEvaluationComment', evaluationId, domainKey, commentType, input.value).then(function (res) {
+        if (!res.success) { YC.toast(res.message, 'danger'); return; }
+        input.value = '';
+        YC.toast(commentType === 'Info_Request' ? 'Request sent — the school has been emailed.' : 'Posted.', 'success');
+        loadEvalCommentsThread(safeKey, evaluationId);
+      });
+    }
+
+    function resolveInfoRequestUi(commentId, safeKey, evaluationId) {
+      YC.authedCall('resolveInfoRequest', commentId).then(function () { loadEvalCommentsThread(safeKey, evaluationId); });
+    }
+
+    // ==================== VENDORS ====================
+
+    var vendorSearchTimer;
+    function debounceLoadVendors() {
+      clearTimeout(vendorSearchTimer);
+      vendorSearchTimer = setTimeout(loadVendorsView, 350);
+    }
+
+    function loadVendorsView() {
+      var filters = {
+        category: document.getElementById('vendorCategoryFilter').value,
+        keyword: document.getElementById('vendorSearchInput').value
+      };
+      if (currentUser.role === 'Super Admin') {
+        YC.authedCall('listAllVendorsForAdmin', {}).then(function (res) {
+          if (!res.success) { YC.toast(res.message, 'danger'); return; }
+          renderVendorsAdminList(res.data);
+        }).catch(function (err) { showVendorsError(err); });
+      } else {
+        YC.authedCall('listApprovedVendors', filters).then(function (res) {
+          if (!res.success) { YC.toast(res.message, 'danger'); return; }
+          renderVendorsDirectory(res.data);
+        }).catch(function (err) { showVendorsError(err); });
+      }
+    }
+
+    function showVendorsError(err) {
+      document.getElementById('vendorsList').innerHTML =
+        '<div class="col-12"><div class="alert alert-danger">Could not load vendors: ' + (err && err.message ? YC.escapeHtml(err.message) : 'Unknown error') + '</div></div>';
+    }
+
+    function renderVendorsDirectory(vendors) {
+      var container = document.getElementById('vendorsList');
+      if (!vendors.length) { container.innerHTML = '<div class="col-12"><p class="text-muted">No approved vendors yet.</p></div>'; return; }
+      container.innerHTML = '';
+      vendors.forEach(function (v) {
+        var col = document.createElement('div');
+        col.className = 'col-md-6';
+        col.innerHTML =
+          '<div class="yc-panel h-100">' +
+          '<div class="d-flex justify-content-between align-items-start">' +
+          '<div><h6 class="fw-bold mb-1">' + YC.escapeHtml(v.Company_Name) + (v.Featured_Status === 'Yes' ? ' <span class="badge bg-warning text-dark">Featured</span>' : '') + '</h6>' +
+          '<div class="text-muted small mb-1">' + YC.escapeHtml(v.Category) + '</div>' +
+          '<p class="mb-2">' + YC.escapeHtml(v.Description) + '</p>' +
+          (v.Consortium_Offer ? '<div class="small mb-2"><strong>Consortium offer:</strong> ' + YC.escapeHtml(v.Consortium_Offer) + '</div>' : '') +
+          (v.Website ? '<a href="' + v.Website + '" target="_blank" class="yc-link small">Visit website</a>' : '') + '</div>' +
+          '<div class="text-end d-flex flex-column gap-1">' +
+          '<button class="btn btn-sm btn-outline-secondary" onclick="toggleVendorProducts(\'' + v.Vendor_ID + '\')">View Products</button>' +
+          '<button class="btn btn-sm btn-yc-primary" onclick="openEnquiryForm(\'' + v.Vendor_ID + '\')">Enquire</button>' +
+          '</div>' +
+          '</div>' +
+          '<div class="d-none mt-2" id="vendorProducts-' + v.Vendor_ID + '"></div>' +
+          '<div class="d-none mt-3 pt-2 border-top" id="enquiryBox-' + v.Vendor_ID + '">' +
+          '<div class="small text-muted mb-1 d-none" id="enquiryProductLabel-' + v.Vendor_ID + '"></div>' +
+          '<textarea class="form-control mb-2" rows="2" placeholder="Your message..." id="enquiryMsg-' + v.Vendor_ID + '"></textarea>' +
+          '<button class="btn btn-sm btn-yc-primary" onclick="sendEnquiry(\'' + v.Vendor_ID + '\')">Send Enquiry</button>' +
+          '</div></div>';
+        container.appendChild(col);
+      });
+    }
+
+    /** productId/productName are optional — set when enquiring about one specific product. */
+    function openEnquiryForm(vendorId, unused, productId, productName) {
+      var box = document.getElementById('enquiryBox-' + vendorId);
+      box.dataset.productId = productId || '';
+      var label = document.getElementById('enquiryProductLabel-' + vendorId);
+      if (productName) {
+        label.textContent = 'Re: ' + productName;
+        label.classList.remove('d-none');
+      } else {
+        label.classList.add('d-none');
+      }
+      box.classList.remove('d-none');
+      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function sendEnquiry(vendorId) {
+      var box = document.getElementById('enquiryBox-' + vendorId);
+      var msg = document.getElementById('enquiryMsg-' + vendorId).value;
+      if (!msg.trim()) { YC.toast('Please enter a message.', 'danger'); return; }
+      YC.authedCall('submitVendorEnquiry', vendorId, { message: msg, productId: box.dataset.productId || '' }).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        if (res.success) { document.getElementById('enquiryMsg-' + vendorId).value = ''; box.classList.add('d-none'); }
+      });
+    }
+
+    function renderVendorsAdminList(vendors) {
+      var container = document.getElementById('vendorsList');
+      if (!vendors.length) { container.innerHTML = '<div class="col-12"><p class="text-muted">No vendors registered yet.</p></div>'; return; }
+      container.innerHTML = '';
+      vendors.forEach(function (v) {
+        var col = document.createElement('div');
+        col.className = 'col-md-6';
+        col.innerHTML =
+          '<div class="yc-panel h-100">' +
+          '<div class="d-flex justify-content-between align-items-start">' +
+          '<div><h6 class="fw-bold mb-1">' + YC.escapeHtml(v.Company_Name) + '</h6>' +
+          '<div class="text-muted small mb-1">' + YC.escapeHtml(v.Category) + ' &middot; ' + statusBadge(v.Status) + '</div>' +
+          '<p class="mb-2">' + YC.escapeHtml(v.Description) + '</p>' +
+          '<div class="small text-muted">Contact: ' + YC.escapeHtml(v.Email) + '</div></div>' +
+          '<div class="text-end d-flex flex-column gap-1">' +
+          (v.Status !== 'Approved' ? '<button class="btn btn-sm btn-yc-primary" onclick="setVendorStatusUi(\'' + v.Vendor_ID + '\',\'Approved\')">Approve</button>' : '') +
+          (v.Status !== 'Rejected' ? '<button class="btn btn-sm btn-outline-danger" onclick="setVendorStatusUi(\'' + v.Vendor_ID + '\',\'Rejected\')">Reject</button>' : '') +
+          '<button class="btn btn-sm btn-outline-secondary" onclick="toggleFeaturedUi(\'' + v.Vendor_ID + '\', ' + (v.Featured_Status !== 'Yes') + ')">' + (v.Featured_Status === 'Yes' ? 'Unfeature' : 'Feature') + '</button>' +
+          '</div></div></div>';
+        container.appendChild(col);
+      });
+    }
+
+    function setVendorStatusUi(vendorId, status) {
+      YC.authedCall('setVendorStatus', vendorId, status).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        loadVendorsView();
+      });
+    }
+
+    function toggleFeaturedUi(vendorId, featured) {
+      YC.authedCall('setVendorFeatured', vendorId, featured).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        loadVendorsView();
+      });
+    }
+
+    // ---------- Vendor's own listing ----------
+
+    function loadMyVendorListing() {
+      YC.authedCall('getMyVendorProfile').then(function (res) {
+        if (!res.success) { YC.toast(res.message, 'danger'); return; }
+        renderMyListingForm(res.data);
+        if (res.data) loadMyProducts();
+      }).catch(function (err) {
+        document.getElementById('myListingPanel').innerHTML = '<div class="alert alert-danger">Could not load your listing: ' + (err && err.message ? YC.escapeHtml(err.message) : 'Unknown error') + '</div>';
+      });
+    }
+
+    function renderMyListingForm(vendor) {
+      var panel = document.getElementById('myListingPanel');
+      if (!vendor) { panel.innerHTML = '<p class="text-muted mb-0">No listing found.</p>'; return; }
+      panel.innerHTML =
+        '<div class="d-flex justify-content-between align-items-start mb-3">' +
+        '<h5 class="fw-bold mb-0">' + YC.escapeHtml(vendor.Company_Name) + '</h5>' + statusBadge(vendor.Status) + '</div>' +
+        '<div class="row g-2">' +
+        '<div class="col-md-6"><label class="form-label">Company name</label><input class="form-control" id="mlCompanyName" value="' + YC.escapeHtml(vendor.Company_Name) + '"></div>' +
+        '<div class="col-md-6"><label class="form-label">Category</label><input class="form-control" id="mlCategory" value="' + YC.escapeHtml(vendor.Category) + '" disabled></div>' +
+        '<div class="col-12"><label class="form-label">Description</label><textarea class="form-control" id="mlDescription" rows="2">' + YC.escapeHtml(vendor.Description) + '</textarea></div>' +
+        '<div class="col-md-6"><label class="form-label">Contact name</label><input class="form-control" id="mlContactName" value="' + YC.escapeHtml(vendor.Contact_Name) + '"></div>' +
+        '<div class="col-md-6"><label class="form-label">Contact email</label><input class="form-control" id="mlEmail" value="' + YC.escapeHtml(vendor.Email) + '"></div>' +
+        '<div class="col-md-6"><label class="form-label">Phone</label><input class="form-control" id="mlPhone" value="' + YC.escapeHtml(vendor.Phone) + '"></div>' +
+        '<div class="col-md-6"><label class="form-label">Website</label><input class="form-control" id="mlWebsite" value="' + YC.escapeHtml(vendor.Website) + '"></div>' +
+        '<div class="col-12"><label class="form-label">Consortium offer</label><input class="form-control" id="mlOffer" value="' + YC.escapeHtml(vendor.Consortium_Offer) + '"></div>' +
+        '</div>' +
+        '<button class="btn btn-yc-primary mt-3" onclick="saveMyListing(\'' + vendor.Vendor_ID + '\')">Save Changes</button>' +
+        (vendor.Status === 'Approved' ? '<p class="text-muted small mt-2 mb-0">Saving changes will send your listing back for re-approval before it\'s public again.</p>' : '') +
+        '<hr class="my-4">' +
+        '<h6 class="fw-bold mb-3">My Products</h6>' +
+        '<div id="myProductsBox" class="mb-3"></div>' +
+        '<div class="row g-2 align-items-end">' +
+        '<div class="col-md-4"><label class="form-label">Product name</label><input class="form-control" id="pdName"></div>' +
+        '<div class="col-md-3"><label class="form-label">Category</label><input class="form-control" id="pdCategory"></div>' +
+        '<div class="col-md-2"><label class="form-label">Price (₹)</label><input class="form-control" type="number" id="pdPrice"></div>' +
+        '<div class="col-md-3"><label class="form-label">Unit (e.g. per set)</label><input class="form-control" id="pdPriceUnit"></div>' +
+        '<div class="col-12"><label class="form-label">Description</label><textarea class="form-control" id="pdDescription" rows="2"></textarea></div>' +
+        '</div>' +
+        '<button class="btn btn-outline-secondary mt-2" onclick="submitAddProduct()">+ Add Product</button>';
+    }
+
+    function saveMyListing(vendorId) {
+      var updates = {
+        companyName: document.getElementById('mlCompanyName').value,
+        description: document.getElementById('mlDescription').value,
+        contactName: document.getElementById('mlContactName').value,
+        contactEmail: document.getElementById('mlEmail').value,
+        phone: document.getElementById('mlPhone').value,
+        website: document.getElementById('mlWebsite').value,
+        consortiumOffer: document.getElementById('mlOffer').value
+      };
+      YC.authedCall('updateVendorProfile', vendorId, updates).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        loadMyVendorListing();
+      });
+    }
+
+    // ---------- Vendor's enquiries ----------
+
+    function loadVendorEnquiries() {
+      YC.authedCall('listMyVendorEnquiries').then(function (res) {
+        if (!res.success) { YC.toast(res.message, 'danger'); return; }
+        var container = document.getElementById('vendorEnquiriesList');
+        if (!res.data.length) { container.innerHTML = '<p class="text-muted mb-0">No enquiries yet.</p>'; return; }
+        container.innerHTML = res.data.map(function (e) {
+          return '<div class="border-bottom py-3 d-flex justify-content-between align-items-start">' +
+            '<div><div class="fw-semibold">' + YC.escapeHtml(e.Name) + ' <span class="text-muted fw-normal small">(' + YC.escapeHtml(e.Email) + ')</span></div>' +
+            (e.Product_Name ? '<div class="small text-muted">Re: <strong>' + YC.escapeHtml(e.Product_Name) + '</strong></div>' : '') +
+            '<div class="small">' + YC.escapeHtml(e.Message) + '</div>' +
+            '<div class="text-muted small">' + new Date(e.Created_Date).toLocaleString() + '</div></div>' +
+            '<select class="form-select form-select-sm" style="width:auto;" onchange="updateEnquiryStatusUi(\'' + e.Enquiry_ID + '\', this.value)">' +
+            ['New', 'Contacted', 'Closed'].map(function (s) { return '<option ' + (e.Status === s ? 'selected' : '') + '>' + s + '</option>'; }).join('') +
+            '</select></div>';
+        }).join('');
+      }).catch(function (err) {
+        document.getElementById('vendorEnquiriesList').innerHTML = '<div class="alert alert-danger">Could not load enquiries: ' + (err && err.message ? YC.escapeHtml(err.message) : 'Unknown error') + '</div>';
+      });
+    }
+
+    function updateEnquiryStatusUi(enquiryId, status) {
+      YC.authedCall('updateEnquiryStatus', enquiryId, status).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+      });
+    }
+
+    // ---------- Vendor's product catalog (shown inside My Listing) ----------
+
+    function loadMyProducts() {
+      var box = document.getElementById('myProductsBox');
+      if (!box) return;
+      YC.authedCall('listMyProducts').then(function (res) {
+        if (!res.success) { box.innerHTML = '<p class="text-danger small mb-0">' + YC.escapeHtml(res.message) + '</p>'; return; }
+        if (!res.data.length) { box.innerHTML = '<p class="text-muted small mb-0">No products added yet.</p>'; return; }
+        box.innerHTML = res.data.map(function (p) {
+          return '<div class="d-flex justify-content-between align-items-start border-bottom py-2">' +
+            '<div><div class="fw-semibold">' + YC.escapeHtml(p.Name) + ' ' + statusBadge(p.Status) + '</div>' +
+            '<div class="text-muted small">' + YC.escapeHtml(p.Category || '') + (p.Price !== '' && p.Price !== undefined ? ' &middot; ₹' + p.Price + (p.Price_Unit ? ' / ' + YC.escapeHtml(p.Price_Unit) : '') : '') + '</div>' +
+            '<div class="small">' + YC.escapeHtml(p.Description || '') + '</div></div>' +
+            '<button class="btn btn-sm btn-outline-secondary" onclick="toggleProductStatusUi(\'' + p.Product_ID + '\', \'' + (p.Status === 'Active' ? 'Inactive' : 'Active') + '\')">' +
+            (p.Status === 'Active' ? 'Deactivate' : 'Activate') + '</button></div>';
+        }).join('');
+      }).catch(function (err) {
+        box.innerHTML = '<p class="text-danger small mb-0">Could not load products: ' + (err && err.message ? YC.escapeHtml(err.message) : 'Unknown error') + '</p>';
+      });
+    }
+
+    function toggleProductStatusUi(productId, status) {
+      YC.authedCall('setProductStatus', productId, status).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        loadMyProducts();
+      });
+    }
+
+    function submitAddProduct() {
+      var data = {
+        name: document.getElementById('pdName').value,
+        category: document.getElementById('pdCategory').value,
+        price: document.getElementById('pdPrice').value,
+        priceUnit: document.getElementById('pdPriceUnit').value,
+        description: document.getElementById('pdDescription').value
+      };
+      if (!data.name) { YC.toast('Product name is required.', 'danger'); return; }
+      YC.authedCall('createProduct', data).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        if (res.success) {
+          ['pdName', 'pdCategory', 'pdPrice', 'pdPriceUnit', 'pdDescription'].forEach(function (id) { document.getElementById(id).value = ''; });
+          loadMyProducts();
+        }
+      });
+    }
+
+    // ---------- Vendor products shown to schools in the directory ----------
+
+    function toggleVendorProducts(vendorId) {
+      var box = document.getElementById('vendorProducts-' + vendorId);
+      var wasHidden = box.classList.contains('d-none');
+      box.classList.toggle('d-none');
+      if (wasHidden && !box.dataset.loaded) {
+        box.dataset.loaded = '1';
+        YC.authedCall('listVendorProducts', vendorId).then(function (res) {
+          if (!res.success) { box.innerHTML = '<p class="text-danger small mb-0">' + YC.escapeHtml(res.message) + '</p>'; return; }
+          if (!res.data.length) { box.innerHTML = '<p class="text-muted small mb-0">No products listed yet.</p>'; return; }
+          box.innerHTML = res.data.map(function (p) {
+            return '<div class="d-flex justify-content-between align-items-center border-top py-2">' +
+              '<div><div class="fw-semibold small">' + YC.escapeHtml(p.Name) + '</div>' +
+              '<div class="text-muted small">' + YC.escapeHtml(p.Category || '') + (p.Price !== '' && p.Price !== undefined ? ' &middot; ₹' + p.Price + (p.Price_Unit ? ' / ' + YC.escapeHtml(p.Price_Unit) : '') : '') + '</div>' +
+              (p.Description ? '<div class="small">' + YC.escapeHtml(p.Description) + '</div>' : '') + '</div>' +
+              '<button class="btn btn-sm btn-outline-secondary" onclick="openEnquiryForm(\'' + vendorId + '\', \'\', \'' + p.Product_ID + '\', \'' + YC.escapeHtml(p.Name).replace(/'/g, "\\'") + '\')">Enquire</button></div>';
+          }).join('');
+        }).catch(function (err) {
+          box.innerHTML = '<p class="text-danger small mb-0">Could not load products: ' + (err && err.message ? YC.escapeHtml(err.message) : 'Unknown error') + '</p>';
+        });
+      }
+    }
+
+    // ---------- Requirements (School posts, Vendor responds) ----------
+
+    function toggleRequirementCreatePanel() {
+      var el = document.getElementById('requirementCreatePanel');
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function submitCreateRequirement() {
+      var data = {
+        title: document.getElementById('reqTitle').value,
+        category: document.getElementById('reqCategory').value,
+        quantity: document.getElementById('reqQuantity').value,
+        neededBy: document.getElementById('reqNeededBy').value,
+        description: document.getElementById('reqDescription').value
+      };
+      if (!data.title || !data.description) { YC.toast('Title and description are required.', 'danger'); return; }
+      YC.authedCall('postRequirement', data).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        if (res.success) {
+          ['reqTitle', 'reqCategory', 'reqQuantity', 'reqNeededBy', 'reqDescription'].forEach(function (id) { document.getElementById(id).value = ''; });
+          toggleRequirementCreatePanel();
+          loadRequirementsList();
+        }
+      });
+    }
+
+    function loadRequirementsList() {
+      document.getElementById('requirementCreateToggleBtn').style.display = currentUser.role === 'School Admin' ? 'inline-block' : 'none';
+      YC.authedCall('listRequirements', {}).then(function (res) {
+        if (!res.success) { YC.toast(res.message, 'danger'); return; }
+        renderRequirementsList(res.data);
+      }).catch(function (err) {
+        document.getElementById('requirementsList').innerHTML =
+          '<div class="alert alert-danger">Could not load requirements: ' + (err && err.message ? YC.escapeHtml(err.message) : 'Unknown error') + '</div>';
+      });
+    }
+
+    function renderRequirementsList(reqs) {
+      var container = document.getElementById('requirementsList');
+      if (!reqs.length) { container.innerHTML = '<p class="text-muted">No requirements posted yet.</p>'; return; }
+      container.innerHTML = '';
+      reqs.forEach(function (r) {
+        var card = document.createElement('div');
+        card.className = 'yc-panel';
+        var actions = '';
+        if (r.isMine || currentUser.role === 'Super Admin') {
+          actions = statusBadge(r.Status) +
+            ' <button class="btn btn-sm btn-outline-secondary ms-2" onclick="viewRequirementResponses(\'' + r.Requirement_ID + '\')">View Responses</button>' +
+            (r.Status === 'Open' ? ' <button class="btn btn-sm btn-outline-danger ms-2" onclick="closeRequirementUi(\'' + r.Requirement_ID + '\')">Close</button>' : '');
+        } else if (currentUser.role === 'Vendor' && r.Status === 'Open') {
+          actions = '<button class="btn btn-sm btn-yc-primary" onclick="toggleRespondForm(\'' + r.Requirement_ID + '\')">Respond</button>';
+        }
+        card.innerHTML =
+          '<div class="d-flex justify-content-between align-items-start">' +
+          '<div><h6 class="fw-bold mb-1">' + YC.escapeHtml(r.Title) + '</h6>' +
+          '<div class="text-muted small mb-1">' + YC.escapeHtml(r.schoolName) + (r.Category ? ' &middot; ' + YC.escapeHtml(r.Category) : '') +
+          (r.Quantity ? ' &middot; Qty: ' + YC.escapeHtml(r.Quantity) : '') + (r.Needed_By ? ' &middot; Needed by ' + formatDateOnly_(r.Needed_By) : '') + '</div>' +
+          '<p class="mb-1">' + YC.escapeHtml(r.Description) + '</p></div>' +
+          '<div class="text-end">' + actions + '</div></div>' +
+          '<div class="d-none mt-2 pt-2 border-top" id="respondBox-' + r.Requirement_ID + '">' +
+          '<textarea class="form-control mb-2" rows="2" placeholder="Your response..." id="respondMsg-' + r.Requirement_ID + '"></textarea>' +
+          '<input class="form-control mb-2" style="max-width:220px;" type="number" placeholder="Quoted price (optional)" id="respondPrice-' + r.Requirement_ID + '">' +
+          '<button class="btn btn-sm btn-yc-primary" onclick="submitRespondToRequirement(\'' + r.Requirement_ID + '\')">Send Response</button></div>' +
+          '<div class="mt-2" id="reqResponses-' + r.Requirement_ID + '"></div>';
+        container.appendChild(card);
+      });
+    }
+
+    function toggleRespondForm(requirementId) {
+      document.getElementById('respondBox-' + requirementId).classList.toggle('d-none');
+    }
+
+    function submitRespondToRequirement(requirementId) {
+      var msg = document.getElementById('respondMsg-' + requirementId).value;
+      var price = document.getElementById('respondPrice-' + requirementId).value;
+      if (!msg.trim()) { YC.toast('Please enter a message.', 'danger'); return; }
+      YC.authedCall('respondToRequirement', requirementId, msg, price).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        if (res.success) loadRequirementsList();
+      });
+    }
+
+    function closeRequirementUi(requirementId) {
+      YC.authedCall('closeRequirement', requirementId).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        loadRequirementsList();
+      });
+    }
+
+    function viewRequirementResponses(requirementId) {
+      var box = document.getElementById('reqResponses-' + requirementId);
+      var wasHidden = box.classList.contains('d-none') || !box.innerHTML;
+      if (!wasHidden) { box.innerHTML = ''; return; }
+      YC.authedCall('listRequirementResponses', requirementId).then(function (res) {
+        if (!res.success) { YC.toast(res.message, 'danger'); return; }
+        if (!res.data.length) { box.innerHTML = '<p class="text-muted small mb-0">No responses yet.</p>'; return; }
+        box.innerHTML = res.data.map(function (r) {
+          return '<div class="border-top pt-2 mt-2">' +
+            '<div class="fw-semibold small">' + YC.escapeHtml(r.vendorName) + (r.Quoted_Price !== '' && r.Quoted_Price !== undefined ? ' &middot; ₹' + r.Quoted_Price : '') + '</div>' +
+            '<div class="small">' + YC.escapeHtml(r.Message) + '</div>' +
+            '<div class="text-muted small">' + YC.escapeHtml(r.vendorEmail) + (r.vendorPhone ? ' &middot; ' + YC.escapeHtml(r.vendorPhone) : '') + '</div></div>';
+        }).join('');
+      });
+    }
+
+    function loadPendingPayments() {
+      YC.authedCall('getPendingPaymentVerifications').then(function (res) {
+        if (!res.success) { YC.toast(res.message, 'danger'); return; }
+        renderPendingPayments(res.data);
+      }).catch(function (err) {
+        document.getElementById('pendingPaymentsList').innerHTML =
+          '<div class="alert alert-danger mb-0">Could not load payment verifications: ' + (err && err.message ? YC.escapeHtml(err.message) : 'Unknown error') + '</div>';
+      });
+    }
+
+    function renderPendingPayments(payments) {
+      var container = document.getElementById('pendingPaymentsList');
+      if (!payments.length) {
+        container.innerHTML = '<p class="text-muted mb-0">No payments waiting for review.</p>';
+        return;
+      }
+      container.innerHTML = '';
+      payments.forEach(function (p) {
+        var row = document.createElement('div');
+        row.className = 'd-flex align-items-start justify-content-between border-bottom py-3';
+        var hasProof = !!p.Proof_Screenshot_URL;
+        row.innerHTML =
+          '<div class="flex-fill me-3">' +
+          '<div class="fw-semibold">' + YC.escapeHtml(p.schoolName) + '</div>' +
+          '<div class="text-muted small">' + YC.escapeHtml(p.tierName) + ' — ₹' + Number(p.Amount).toLocaleString('en-IN') + '</div>' +
+          '<div class="small" id="payDetails-' + p.Payment_ID + '">' +
+          '<strong>UTR:</strong> ' + (YC.escapeHtml(p.UTR_Number) || '<span class="text-muted">—</span>') +
+          ' &nbsp; <strong>Date:</strong> ' + (YC.escapeHtml(p.Transaction_Date) || '<span class="text-muted">—</span>') +
+          (p.Transaction_Notes ? '<br><strong>Notes:</strong> ' + YC.escapeHtml(p.Transaction_Notes) : '') +
+          ' &nbsp; <a href="#" onclick="editPaymentDetails(\'' + p.Payment_ID + '\'); return false;" class="yc-link">Edit</a></div>' +
+          (hasProof
+            ? '<a href="' + p.Proof_Screenshot_URL + '" target="_blank" class="yc-link small">View screenshot</a>'
+            : '<span class="text-danger small">No screenshot uploaded yet — ask the school to retry from their dashboard</span>') +
+          '</div>' +
+          '<div class="d-flex gap-2">' +
+          '<button class="btn btn-sm btn-outline-danger" onclick="reviewPayment(\'' + p.Payment_ID + '\', \'reject\', this)">Reject</button>' +
+          '<button class="btn btn-sm btn-yc-primary" ' + (hasProof ? '' : 'disabled title="No screenshot to verify yet"') + ' onclick="reviewPayment(\'' + p.Payment_ID + '\', \'approve\', this)">Approve</button>' +
+          '</div>';
+        container.appendChild(row);
+      });
+    }
+
+    function editPaymentDetails(paymentId) {
+      var newUtr = prompt('UTR / Transaction Reference Number:');
+      if (newUtr === null) return;
+      var newDate = prompt('Transaction Date (YYYY-MM-DD):');
+      if (newDate === null) return;
+      var newNotes = prompt('Notes (optional):') || '';
+      YC.authedCall('updatePaymentDetails', paymentId, { utrNumber: newUtr, transactionDate: newDate, transactionNotes: newNotes }).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        if (res.success) loadPendingPayments();
+      });
+    }
+
+    function reviewPayment(paymentId, decision, btnEl) {
+      btnEl.disabled = true;
+      YC.authedCall('verifyUpiPayment', paymentId, decision).then(function (res) {
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        loadPendingPayments();
+      }).catch(function (err) {
+        YC.toast(err && err.message ? err.message : 'Could not process this payment.', 'danger');
+        btnEl.disabled = false;
+      });
+    }
+
+    // Used by the onboarding "done" screen's button — re-checks the session
+    // (now with a School_ID attached) and moves straight into the dashboard,
+    // all without any page navigation.
+    function enterApp() {
+      YC.showLoading();
+      YC.authedCall('getCurrentUser').then(function (res) {
+        YC.hideLoading();
+        if (!res.success) { showShell('loginShell'); loginShowView('loginView'); return; }
+        YC.setSession(YC.getSessionToken(), res.data);
+        enterAppForUser(res.data);
+      }).catch(function () {
+        YC.hideLoading();
+        showShell('loginShell');
+        loginShowView('loginView');
+      });
+    }
+
+    // ---------- Login / register / forgot password ----------
+
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      YC.showLoading();
+      YC.call('loginUser', document.getElementById('loginEmail').value, document.getElementById('loginPassword').value)
+        .then(function (res) {
+          YC.hideLoading();
+          if (!res.success) { YC.toast(res.message, 'danger'); return; }
+          YC.setSession(res.data.sessionToken, res.data.user);
+          enterAppForUser(res.data.user);
+        })
+        .catch(function (err) {
+          YC.hideLoading();
+          YC.toast(err && err.message ? err.message : 'Login failed. Please try again.', 'danger');
+        });
+    });
+
+    document.getElementById('registerForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      YC.showLoading();
+      YC.call('registerUser', {
+        firstName: document.getElementById('regFirstName').value,
+        lastName: document.getElementById('regLastName').value,
+        email: document.getElementById('regEmail').value,
+        password: document.getElementById('regPassword').value,
+        role: document.getElementById('regRole').value
+      }).then(function (res) {
+        YC.hideLoading();
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        if (res.success) loginShowView('loginView');
+      }).catch(function (err) {
+        YC.hideLoading();
+        YC.toast(err && err.message ? err.message : 'Registration failed. Please try again.', 'danger');
+      });
+    });
+
+    document.getElementById('forgotForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      YC.showLoading();
+      YC.call('requestPasswordReset', document.getElementById('forgotEmail').value).then(function (res) {
+        YC.hideLoading();
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+      }).catch(function (err) {
+        YC.hideLoading();
+        YC.toast(err && err.message ? err.message : 'Something went wrong. Please try again.', 'danger');
+      });
+    });
+
+    // ---------- Onboarding wizard ----------
+
+    function obShowStep(step) {
+      document.querySelectorAll('.onboarding-step').forEach(function (el) {
+        el.classList.toggle('d-none', el.getAttribute('data-step') !== String(step));
+      });
+      document.querySelectorAll('.yc-step-dot').forEach(function (dot) {
+        var s = Number(dot.getAttribute('data-step'));
+        dot.classList.toggle('done', s < Number(step));
+        dot.classList.toggle('current', s === Number(step));
+      });
+    }
+
+    function obGoToStep2() {
+      var required = ['obSchoolName', 'obBoard', 'obAddress', 'obCity', 'obState', 'obCountry', 'obSchoolType', 'obContactName', 'obContactEmail'];
+      for (var i = 0; i < required.length; i++) {
+        if (!document.getElementById(required[i]).value) {
+          YC.toast('Please fill in all required fields.', 'danger');
+          return;
+        }
+      }
+      onboardingState.schoolName = document.getElementById('obSchoolName').value;
+      onboardingState.boardAffiliation = document.getElementById('obBoard').value;
+      onboardingState.address = document.getElementById('obAddress').value;
+      onboardingState.city = document.getElementById('obCity').value;
+      onboardingState.state = document.getElementById('obState').value;
+      onboardingState.country = document.getElementById('obCountry').value;
+      onboardingState.schoolType = document.getElementById('obSchoolType').value;
+      onboardingState.contactName = document.getElementById('obContactName').value;
+      onboardingState.contactEmail = document.getElementById('obContactEmail').value;
+      onboardingState.contactPhone = document.getElementById('obContactPhone').value;
+
+      var logoFile = document.getElementById('obLogo').files[0];
+      if (logoFile) {
+        var reader = new FileReader();
+        reader.onload = function () {
+          onboardingState.logoBase64 = reader.result;
+          onboardingState.logoFileName = logoFile.name;
+          onboardingState.logoMimeType = logoFile.type;
+          obShowStep(2);
+        };
+        reader.readAsDataURL(logoFile);
+      } else {
+        obShowStep(2);
+      }
+    }
+
+    function obSetEarlyYears(value) {
+      onboardingState.earlyYearsProgram = value;
+      document.getElementById('obEyYes').classList.toggle('btn-outline-secondary', !value);
+      document.getElementById('obEyYes').classList.toggle('btn-yc-primary', value);
+      document.getElementById('obEyNo').classList.toggle('btn-outline-secondary', value);
+      document.getElementById('obEyNo').classList.toggle('btn-yc-primary', !value);
+      submitSchoolForApproval();
+    }
+
+    function submitSchoolForApproval() {
+      YC.showLoading();
+      // Re-verify who the stored session token actually belongs to right
+      // before submitting. The onboarding wizard can stay open for a while
+      // (filling two steps, maybe uploading a logo), and in a browser that
+      // was previously used to log into a different account, a stale or
+      // swapped session token can end up attached — createSchoolProfile
+      // would then fail with a confusing "Only School Admins can..." error
+      // that looks like a permissions bug rather than a session mismatch.
+      // This catches that case up front and sends them back to a clean
+      // login instead.
+      YC.authedCall('getCurrentUser').then(function (whoRes) {
+        if (!whoRes.success || !whoRes.data || whoRes.data.role !== 'School Admin') {
+          YC.hideLoading();
+          YC.clearSession();
+          YC.toast('Your session no longer matches a School Admin account — please log in again with the account you just registered.', 'danger');
+          showShell('loginShell');
+          loginShowView('loginView');
+          return;
+        }
+        YC.authedCall('createSchoolProfile', onboardingState).then(function (res) {
+          YC.hideLoading();
+          if (!res.success) {
+            YC.toast(res.message, 'danger');
+            return;
+          }
+          onboardingState.schoolId = res.data.schoolId;
+          obShowStep('done');
+        }).catch(function (err) {
+          YC.hideLoading();
+          YC.toast(err && err.message ? err.message : 'Something went wrong. Please try again.', 'danger');
+        });
+      }).catch(function (err) {
+        YC.hideLoading();
+        YC.toast(err && err.message ? err.message : 'Something went wrong. Please try again.', 'danger');
+      });
+    }
+
+    // ---------- Logout ----------
+
+    function doLogout() {
+      YC.authedCall('logoutUser'); // fire-and-forget server-side cleanup
+      YC.clearSession();
+      currentUser = null;
+      showShell('loginShell');
+      loginShowView('loginView');
+    }
+
+    // ---------- Change Password ----------
+
+    function openChangePasswordModal() {
+      document.getElementById('cpCurrent').value = '';
+      document.getElementById('cpNew').value = '';
+      document.getElementById('cpConfirm').value = '';
+      var modal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+      modal.show();
+    }
+
+    function submitChangePassword() {
+      var current = document.getElementById('cpCurrent').value;
+      var next = document.getElementById('cpNew').value;
+      var confirm = document.getElementById('cpConfirm').value;
+      if (!current || !next) { YC.toast('Please fill in all fields.', 'danger'); return; }
+      if (next.length < 8) { YC.toast('New password must be at least 8 characters.', 'danger'); return; }
+      if (next !== confirm) { YC.toast('New passwords do not match.', 'danger'); return; }
+
+      YC.showLoading();
+      YC.authedCall('changePassword', current, next).then(function (res) {
+        YC.hideLoading();
+        YC.toast(res.message, res.success ? 'success' : 'danger');
+        if (res.success) {
+          var modalEl = document.getElementById('changePasswordModal');
+          var modalInstance = bootstrap.Modal.getInstance(modalEl);
+          if (modalInstance) modalInstance.hide();
+        }
+      }).catch(function (err) {
+        YC.hideLoading();
+        YC.toast(err && err.message ? err.message : 'Could not change password.', 'danger');
+      });
+    }
+
+    // ---------- Bootstrap ----------
+    (function init() {
+      var token = YC.getSessionToken();
+      if (!token) {
+        showShell('loginShell');
+        loginShowView('loginView');
+        return;
+      }
+      YC.showLoading();
+      YC.authedCall('getCurrentUser').then(function (res) {
+        YC.hideLoading();
+        if (!res.success) {
+          YC.clearSession();
+          showShell('loginShell');
+          loginShowView('loginView');
+          return;
+        }
+        YC.setSession(token, res.data);
+        enterAppForUser(res.data);
+      }).catch(function () {
+        YC.hideLoading();
+        YC.clearSession();
+        showShell('loginShell');
+        loginShowView('loginView');
+      });
+    })();
+  </script>
+</body>
+</html>
