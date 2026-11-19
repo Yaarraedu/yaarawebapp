@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Yaara Consortium</title>
   <meta name="theme-color" content="#12294d">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -144,32 +144,43 @@
 
   .yc-app-shell { display: flex; min-height: 100vh; }
 
+  /* Desktop: slim icon rail (icon over a short caption), like an app launcher */
   .yc-sidebar {
-    width: 250px;
+    width: 92px;
     background: var(--yc-navy);
     color: #fff;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    padding: 1.25rem 1rem;
+    padding: 0.9rem 0.4rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
   }
 
-  .yc-sidebar .yc-brand { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.5rem 1.5rem; }
-  .yc-sidebar .yc-brand span { font-weight: 800; font-size: 1.05rem; }
+  .yc-sidebar .yc-brand { display: flex; align-items: center; justify-content: center; padding: 0.25rem 0 1rem; }
+  .yc-sidebar .yc-brand span { display: none; }
 
   .yc-nav-link {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0.7rem;
-    padding: 0.6rem 0.75rem;
-    border-radius: 8px;
+    justify-content: center;
+    gap: 0.2rem;
+    padding: 0.42rem 0.2rem;
+    border-radius: 12px;
     color: rgba(255,255,255,0.82);
     text-decoration: none;
-    font-weight: 500;
-    font-size: 0.92rem;
+    font-weight: 600;
+    font-size: 0.66rem;
+    line-height: 1.15;
+    text-align: center;
     cursor: pointer;
-    margin-bottom: 0.15rem;
+    margin-bottom: 0.12rem;
+    word-break: break-word;
   }
+  .yc-nav-link i { font-size: 1.25rem; line-height: 1; }
   .yc-nav-link:hover { background: rgba(255,255,255,0.08); color: #fff; }
   .yc-nav-link.active { background: var(--yc-gold); color: var(--yc-navy); font-weight: 700; }
 
@@ -244,21 +255,65 @@
     line-height: 1;
   }
 
+  /* Icon grids (dashboard quick-access + phone "More" sheet) */
+  .yc-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 0.75rem; }
+  .yc-tile {
+    background: #fff; border: 1px solid var(--yc-border); border-radius: 16px;
+    padding: 0.85rem 0.3rem 0.7rem; text-align: center; cursor: pointer;
+    color: var(--yc-navy); font-weight: 600; font-size: 0.76rem; line-height: 1.2;
+    display: flex; flex-direction: column; align-items: center; gap: 0.45rem;
+    font-family: inherit;
+  }
+  .yc-tile i {
+    display: flex; align-items: center; justify-content: center;
+    width: 46px; height: 46px; border-radius: 14px; background: #f2f5fa; font-size: 1.35rem;
+  }
+  .yc-tile:hover { border-color: var(--yc-navy-light); }
+  .yc-tile:active { transform: scale(0.97); }
+
+  /* Phone-only app chrome: hidden on desktop */
+  .yc-bottomnav, .yc-more-sheet, .yc-more-backdrop { display: none; }
   .yc-sidebar-backdrop { display: none; }
 
   @media (max-width: 900px) {
     .yc-auth-brandpane { display: none; }
-    .yc-sidebar {
-      position: fixed; left: -260px; top: 0; bottom: 0; z-index: 1000;
-      transition: left 0.2s ease; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    .yc-sidebar { display: none; }
+    .yc-topbar { padding: 0 1rem; }
+    .yc-content { padding: 1rem 1rem calc(5.5rem + env(safe-area-inset-bottom, 0px)); }
+
+    .yc-bottomnav {
+      display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 1000;
+      background: #fff; border-top: 1px solid var(--yc-border);
+      padding: 0.3rem 0.25rem calc(0.3rem + env(safe-area-inset-bottom, 0px));
+      box-shadow: 0 -2px 14px rgba(18, 41, 77, 0.08);
     }
-    .yc-sidebar.open { left: 0; }
-    .yc-sidebar-toggle { display: inline-flex; }
-    .yc-sidebar-backdrop {
-      display: none;
-      position: fixed; inset: 0; background: rgba(18, 41, 77, 0.45); z-index: 999;
+    .yc-tab {
+      flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 2px;
+      padding: 0.2rem 0; border: none; background: none; color: var(--yc-muted);
+      font-size: 0.66rem; font-weight: 600; cursor: pointer; font-family: inherit;
     }
-    .yc-sidebar-backdrop.open { display: block; }
+    .yc-tab > span:last-child { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .yc-tab .ico {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 54px; height: 28px; border-radius: 14px; font-size: 1.3rem; transition: background 0.15s ease;
+    }
+    .yc-tab.active { color: var(--yc-navy); font-weight: 700; }
+    .yc-tab.active .ico { background: var(--yc-gold); }
+
+    .yc-more-backdrop {
+      display: none; position: fixed; inset: 0; background: rgba(18, 41, 77, 0.45); z-index: 1001;
+    }
+    .yc-more-backdrop.open { display: block; }
+    .yc-more-sheet {
+      display: block; position: fixed; left: 0; right: 0; bottom: 0; z-index: 1002;
+      background: #fff; border-radius: 22px 22px 0 0;
+      padding: 0.6rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px));
+      max-height: 75vh; overflow-y: auto;
+      transform: translateY(105%); transition: transform 0.22s ease;
+    }
+    .yc-more-sheet.open { transform: none; }
+    .yc-more-handle { width: 42px; height: 4px; border-radius: 2px; background: var(--yc-border); margin: 0 auto 0.9rem; }
+    .yc-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
 
   .spinner-overlay {
@@ -519,14 +574,13 @@
         <div class="yc-brand"><div class="yc-logo-mark">YC</div><span>Yaara Consortium</span></div>
         <div id="sidebarNav"></div>
         <div class="mt-auto">
-          <a class="yc-nav-link" onclick="closeSidebar(); openChangePasswordModal();"><i class="bi bi-key-fill"></i> Change Password</a>
-          <a class="yc-nav-link" onclick="closeSidebar(); doLogout();"><i class="bi bi-box-arrow-right"></i> Logout</a>
+          <a class="yc-nav-link" title="Change Password" onclick="openChangePasswordModal();"><i class="bi bi-key-fill"></i><span>Password</span></a>
+          <a class="yc-nav-link" title="Logout" onclick="doLogout();"><i class="bi bi-box-arrow-right"></i><span>Logout</span></a>
         </div>
       </div>
       <div class="yc-main">
         <div class="yc-topbar">
           <div class="d-flex align-items-center gap-2">
-            <button type="button" class="yc-sidebar-toggle" id="sidebarToggleBtn" onclick="toggleSidebar()" aria-label="Open menu"><i class="bi bi-list"></i></button>
             <div class="fw-bold" id="topbarTitle">Dashboard</div>
           </div>
           <div class="d-flex align-items-center gap-3">
@@ -538,13 +592,15 @@
 
           <!-- DASHBOARD -->
           <div class="yc-view" id="view-dashboard">
+            <div class="yc-panel mb-3">
+              <h6 class="fw-bold mb-3">Quick access</h6>
+              <div class="yc-tiles" id="dashboardTiles"></div>
+            </div>
             <div id="dashboardStatsRow" class="row g-3 mb-3"></div>
             <div class="yc-panel mb-3">
               <h5 class="fw-bold">Welcome to Yaara Consortium</h5>
               <p class="text-muted mb-0">
-                You're logged in as <strong id="userRoleLabel"></strong>. Events, the content library,
-                vendor marketplace, exchange programs and promotions arrive in upcoming build phases —
-                Phase 1–2 covers authentication, roles, school onboarding, and core admin tools end-to-end.
+                You're logged in as <strong id="userRoleLabel"></strong>. Tap an icon above to open a section.
               </p>
             </div>
           </div>
@@ -822,6 +878,13 @@
 
         </div>
       </div>
+    </div>
+    <!-- App-style navigation on phones: bottom tab bar + "More" sheet -->
+    <nav class="yc-bottomnav" id="bottomNav" aria-label="Main navigation"></nav>
+    <div class="yc-more-backdrop" id="moreBackdrop" onclick="closeMore()"></div>
+    <div class="yc-more-sheet" id="moreSheet">
+      <div class="yc-more-handle"></div>
+      <div class="yc-tiles" id="moreTiles"></div>
     </div>
   </div>
 
@@ -1232,21 +1295,107 @@ window.addEventListener('unhandledrejection', function (event) {
       ]
     };
 
+    // Which sections get a slot on the phone's bottom tab bar (everything else
+    // lives under "More"). Short labels keep the icon + caption tidy.
+    var PRIMARY_NAV_ = {
+      'Super Admin': ['dashboard', 'schools', 'events', 'users'],
+      'School Admin': ['dashboard', 'myschool', 'events', 'exchange'],
+      'Teacher': ['dashboard', 'events', 'exchange', 'content'],
+      'Student': ['dashboard', 'content', 'notifications'],
+      'Vendor': ['dashboard', 'mylisting', 'vendorenquiries', 'requirements'],
+      'Evaluator': ['dashboard', 'evaluations', 'notifications']
+    };
+    var SHORT_LABELS_ = {
+      dashboard: 'Home', exchange: 'Exchange', content: 'Library', selfeval: 'Self Eval',
+      myschool: 'My School', requirements: 'Requirements', vendorenquiries: 'Enquiries',
+      mylisting: 'Listing', notifications: 'Alerts'
+    };
+    function navShort_(item) { return (item.view && SHORT_LABELS_[item.view]) || item.label; }
+
+    function openMore() {
+      document.getElementById('moreSheet').classList.add('open');
+      document.getElementById('moreBackdrop').classList.add('open');
+    }
+    function closeMore() {
+      document.getElementById('moreSheet').classList.remove('open');
+      document.getElementById('moreBackdrop').classList.remove('open');
+    }
+
+    function navClick_(item) {
+      return function () {
+        closeSidebar(); closeMore();
+        if (item.comingSoon) { YC.toast(item.label + ' is coming in a later build phase.', 'dark'); }
+        else { switchView(item.view); }
+      };
+    }
+
+    function makeTile_(iconClass, label, onclick) {
+      var t = document.createElement('button');
+      t.type = 'button';
+      t.className = 'yc-tile';
+      t.innerHTML = '<i class="bi ' + iconClass + '"></i><span>' + YC.escapeHtml(label) + '</span>';
+      t.onclick = onclick;
+      return t;
+    }
+
+    // One list of sections (NAV_ITEMS_) drives all three app-style menus:
+    // the icon rail on desktop, the bottom tab bar + "More" sheet on phones,
+    // and the quick-access icon grid on the dashboard.
     function buildSidebar(role) {
       var items = NAV_ITEMS_[role] || NAV_ITEMS_['Teacher'];
+      var primary = PRIMARY_NAV_[role] || PRIMARY_NAV_['Teacher'];
+
+      // Desktop: slim icon rail
       var nav = document.getElementById('sidebarNav');
       nav.innerHTML = '';
       items.forEach(function (item) {
         var a = document.createElement('a');
         a.className = 'yc-nav-link';
+        a.title = item.label;
         a.setAttribute('data-view', item.view || '');
-        a.innerHTML = '<i class="bi ' + item.icon + '"></i> ' + item.label;
-        if (item.comingSoon) {
-          a.onclick = function () { closeSidebar(); YC.toast(item.label + ' is coming in a later build phase.', 'dark'); };
-        } else {
-          a.onclick = function () { closeSidebar(); switchView(item.view); };
-        }
+        a.innerHTML = '<i class="bi ' + item.icon + '"></i><span>' + YC.escapeHtml(navShort_(item)) + '</span>';
+        a.onclick = navClick_(item);
         nav.appendChild(a);
+      });
+
+      // Phone: bottom tab bar
+      var bar = document.getElementById('bottomNav');
+      bar.innerHTML = '';
+      primary.forEach(function (v) {
+        var item = items.filter(function (i) { return i.view === v; })[0];
+        if (!item) return;
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'yc-tab';
+        b.setAttribute('data-view', v);
+        b.innerHTML = '<span class="ico"><i class="bi ' + item.icon + '"></i></span><span>' + YC.escapeHtml(navShort_(item)) + '</span>';
+        b.onclick = navClick_(item);
+        bar.appendChild(b);
+      });
+      var more = document.createElement('button');
+      more.type = 'button';
+      more.className = 'yc-tab';
+      more.id = 'moreTabBtn';
+      more.innerHTML = '<span class="ico"><i class="bi bi-grid-3x3-gap-fill"></i></span><span>More</span>';
+      more.onclick = openMore;
+      bar.appendChild(more);
+
+      // Phone: "More" sheet = remaining sections + account actions
+      var moreTiles = document.getElementById('moreTiles');
+      moreTiles.innerHTML = '';
+      items.forEach(function (item) {
+        if (item.view && primary.indexOf(item.view) !== -1) return;
+        moreTiles.appendChild(makeTile_(item.icon, navShort_(item), navClick_(item)));
+      });
+      moreTiles.appendChild(makeTile_('bi-key-fill', 'Password', function () { closeMore(); openChangePasswordModal(); }));
+      moreTiles.appendChild(makeTile_('bi-box-arrow-right', 'Logout', function () { closeMore(); doLogout(); }));
+
+      // Dashboard: app-launcher style icon grid
+      var tiles = document.getElementById('dashboardTiles');
+      tiles.innerHTML = '';
+      items.forEach(function (item) {
+        if (item.view === 'dashboard') return;
+        tiles.appendChild(makeTile_(item.icon, navShort_(item), navClick_(item)));
       });
     }
 
@@ -1262,9 +1411,15 @@ window.addEventListener('unhandledrejection', function (event) {
       document.querySelectorAll('.yc-view').forEach(function (el) {
         el.classList.toggle('d-none', el.id !== 'view-' + viewName);
       });
-      document.querySelectorAll('#sidebarNav .yc-nav-link').forEach(function (el) {
+      document.querySelectorAll('#sidebarNav .yc-nav-link, #bottomNav .yc-tab[data-view]').forEach(function (el) {
         el.classList.toggle('active', el.getAttribute('data-view') === viewName);
       });
+      var moreBtn = document.getElementById('moreTabBtn');
+      if (moreBtn) {
+        var prim = (currentUser && PRIMARY_NAV_[currentUser.role]) || [];
+        moreBtn.classList.toggle('active', prim.indexOf(viewName) === -1);
+      }
+      window.scrollTo(0, 0);
       document.getElementById('topbarTitle').textContent = VIEW_TITLES_[viewName] || 'Dashboard';
 
       if (viewName === 'dashboard') loadDashboard();
