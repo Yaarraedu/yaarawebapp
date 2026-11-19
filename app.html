@@ -21,7 +21,9 @@
     --yc-navy: #12294d;
     --yc-navy-light: #1a3c6e;
     --yc-gold: #c99a3f;
-    --yc-bg: #f5f7fb;
+    --yc-teal: #126b78;
+    --yc-teal-light: #1b9aae;
+    --yc-bg: #f3f6fb;
     --yc-border: #e3e8f0;
     --yc-text: #1f2937;
     --yc-muted: #6b7280;
@@ -341,6 +343,93 @@
   .yc-event-poster .bi { font-size: 2.5rem; color: #9aa7b8; }
   .yc-event-body { flex: 1 1 auto; }
   .yc-event-actions { margin-top: 0.75rem; }
+
+  /* =====================================================================
+     Colourful app theme (layered over the base styles above)
+     ===================================================================== */
+  body { background: linear-gradient(180deg, #eef3fb 0%, #f7f9fd 45%, #f3f6fb 100%); background-attachment: fixed; }
+
+  /* Rail: deep navy -> teal, with a soft glow behind the active item */
+  .yc-sidebar { background: linear-gradient(180deg, #12294d 0%, #14436a 55%, #126b78 100%); box-shadow: 4px 0 18px rgba(18, 41, 77, 0.18); }
+  .yc-nav-link.active { background: linear-gradient(135deg, #f2c15c, #c99a3f); color: #12294d; box-shadow: 0 4px 12px rgba(201, 154, 63, 0.45); }
+
+  /* Top bar: colour stripe + avatar */
+  .yc-topbar { position: relative; box-shadow: 0 2px 14px rgba(18, 41, 77, 0.06); border-bottom: none; }
+  .yc-topbar::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+    background: linear-gradient(90deg, #126b78, #7c5cdb, #ef6a5b, #f5a524);
+  }
+  .yc-avatar {
+    display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px;
+    border-radius: 50%; color: #fff; font-weight: 700; font-size: 0.8rem;
+    background: linear-gradient(135deg, #126b78, #7c5cdb);
+  }
+
+  /* Buttons */
+  .btn-yc-primary { background: linear-gradient(135deg, #12294d, #126b78); border: none; box-shadow: 0 3px 10px rgba(18, 41, 77, 0.2); }
+  .btn-yc-primary:hover { background: linear-gradient(135deg, #1a3c6e, #1b9aae); }
+  .btn-yc-gold { background: linear-gradient(135deg, #f2c15c, #c99a3f); border: none; }
+
+  /* Panels */
+  .yc-panel { border: none; border-radius: 18px; box-shadow: 0 4px 18px rgba(18, 41, 77, 0.07); }
+  .yc-content h4, .yc-content h5.fw-bold, .yc-content h6.fw-bold { color: var(--yc-navy); }
+
+  /* Welcome hero */
+  .yc-hero {
+    background: linear-gradient(135deg, #12294d 0%, #14436a 50%, #126b78 100%);
+    color: #fff; border-radius: 20px; padding: 1.4rem 1.5rem; position: relative; overflow: hidden;
+    box-shadow: 0 8px 24px rgba(18, 41, 77, 0.22);
+  }
+  .yc-hero::before, .yc-hero::after { content: ''; position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.08); }
+  .yc-hero::before { width: 180px; height: 180px; right: -40px; top: -60px; }
+  .yc-hero::after { width: 110px; height: 110px; right: 90px; bottom: -50px; background: rgba(242, 193, 92, 0.22); }
+  .yc-hero h5 { color: #fff !important; margin-bottom: 0.25rem; position: relative; z-index: 1; }
+  .yc-hero p { color: rgba(255, 255, 255, 0.85) !important; position: relative; z-index: 1; }
+  .yc-hero .yc-role-chip {
+    display: inline-block; background: rgba(255, 255, 255, 0.18); border-radius: 20px;
+    padding: 0.1rem 0.7rem; font-weight: 700; font-size: 0.8rem;
+  }
+
+  /* Stat cards: bold gradients with an icon chip */
+  .yc-stat-card { position: relative; overflow: hidden; border: none; color: #fff; padding: 1.1rem 1.25rem; box-shadow: 0 6px 18px rgba(18, 41, 77, 0.14); }
+  .yc-stat-card .value { color: #fff; }
+  .yc-stat-card .label { color: rgba(255, 255, 255, 0.88); }
+  .yc-stat-card .stat-icon {
+    position: absolute; right: 12px; top: 12px; width: 40px; height: 40px; border-radius: 12px;
+    background: rgba(255, 255, 255, 0.22); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+  }
+  .yc-stat-card::after { content: ''; position: absolute; width: 90px; height: 90px; border-radius: 50%; right: -25px; bottom: -35px; background: rgba(255, 255, 255, 0.12); }
+  .stat-teal { background: linear-gradient(135deg, #1b9aae, #126b78); }
+  .stat-violet { background: linear-gradient(135deg, #9a7cf0, #6a49d0); }
+  .stat-coral { background: linear-gradient(135deg, #ff8a78, #e5533f); }
+  .stat-sky { background: linear-gradient(135deg, #4cb4f5, #2478d4); }
+  .stat-emerald { background: linear-gradient(135deg, #34c995, #12915f); }
+  .stat-amber { background: linear-gradient(135deg, #ffc24d, #ee8f1c); }
+  .stat-pink { background: linear-gradient(135deg, #f77fb8, #d63a85); }
+  .stat-indigo { background: linear-gradient(135deg, #6f7ff0, #3f4fc4); }
+
+  /* Icon tiles: each section has its own colour */
+  .yc-tile { border: none; box-shadow: 0 3px 12px rgba(18, 41, 77, 0.08); transition: transform 0.12s ease, box-shadow 0.12s ease; }
+  .yc-tile:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(18, 41, 77, 0.14); }
+  .yc-tile i { color: #fff; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.14); }
+  .acc-teal i { background: linear-gradient(135deg, #1b9aae, #126b78); }
+  .acc-violet i { background: linear-gradient(135deg, #9a7cf0, #6a49d0); }
+  .acc-coral i { background: linear-gradient(135deg, #ff8a78, #e5533f); }
+  .acc-sky i { background: linear-gradient(135deg, #4cb4f5, #2478d4); }
+  .acc-emerald i { background: linear-gradient(135deg, #34c995, #12915f); }
+  .acc-amber i { background: linear-gradient(135deg, #ffc24d, #ee8f1c); }
+  .acc-pink i { background: linear-gradient(135deg, #f77fb8, #d63a85); }
+  .acc-indigo i { background: linear-gradient(135deg, #6f7ff0, #3f4fc4); }
+  .acc-gold i { background: linear-gradient(135deg, #f2c15c, #c99a3f); }
+  .acc-slate i { background: linear-gradient(135deg, #8793a8, #566277); }
+
+  @media (max-width: 900px) {
+    .yc-bottomnav { box-shadow: 0 -4px 20px rgba(18, 41, 77, 0.12); border-top: none; }
+    .yc-tab.active { color: var(--yc-teal); }
+    .yc-tab.active .ico { background: linear-gradient(135deg, #1b9aae, #126b78); color: #fff; box-shadow: 0 4px 10px rgba(18, 107, 120, 0.35); }
+    #topbarUserName { display: none; }
+    .yc-hero { padding: 1.1rem 1.2rem; }
+  }
 </style>
 
 </head>
@@ -586,23 +675,23 @@
           <div class="d-flex align-items-center gap-3">
             <i class="bi bi-bell fs-5" style="cursor:pointer;" onclick="switchView('notifications')"></i>
             <span id="topbarUserName" class="fw-semibold"></span>
+            <span class="yc-avatar" id="topbarAvatar"></span>
           </div>
         </div>
         <div class="yc-content">
 
           <!-- DASHBOARD -->
           <div class="yc-view" id="view-dashboard">
+            <div class="yc-hero mb-3">
+              <h5 class="fw-bold">Welcome back, <span id="heroName"></span></h5>
+              <p class="mb-0">You're logged in as <span class="yc-role-chip" id="userRoleLabel"></span> &middot; Tap an icon below to open a section.</p>
+            </div>
             <div class="yc-panel mb-3">
               <h6 class="fw-bold mb-3">Quick access</h6>
               <div class="yc-tiles" id="dashboardTiles"></div>
             </div>
             <div id="dashboardStatsRow" class="row g-3 mb-3"></div>
-            <div class="yc-panel mb-3">
-              <h5 class="fw-bold">Welcome to Yaara Consortium</h5>
-              <p class="text-muted mb-0">
-                You're logged in as <strong id="userRoleLabel"></strong>. Tap an icon above to open a section.
-              </p>
-            </div>
+            
           </div>
 
           <!-- SCHOOLS (Super Admin) -->
@@ -1180,6 +1269,8 @@ window.addEventListener('unhandledrejection', function (event) {
         showShell('appShell');
         document.getElementById('topbarUserName').textContent = user.firstName + ' ' + user.lastName;
         document.getElementById('userRoleLabel').textContent = user.role;
+        document.getElementById('heroName').textContent = user.firstName || 'there';
+        document.getElementById('topbarAvatar').textContent = ((user.firstName || '?').charAt(0) + (user.lastName || '').charAt(0)).toUpperCase();
         buildSidebar(user.role);
         switchView('dashboard');
       }
@@ -1329,10 +1420,16 @@ window.addEventListener('unhandledrejection', function (event) {
       };
     }
 
-    function makeTile_(iconClass, label, onclick) {
+    var ACCENTS_ = {
+      schools: 'teal', myschool: 'teal', users: 'violet', events: 'coral', exchange: 'sky',
+      content: 'pink', evaluations: 'emerald', selfeval: 'emerald', vendors: 'amber', mylisting: 'amber',
+      requirements: 'indigo', vendorenquiries: 'sky', notifications: 'gold'
+    };
+
+    function makeTile_(iconClass, label, onclick, accent) {
       var t = document.createElement('button');
       t.type = 'button';
-      t.className = 'yc-tile';
+      t.className = 'yc-tile acc-' + (accent || 'indigo');
       t.innerHTML = '<i class="bi ' + iconClass + '"></i><span>' + YC.escapeHtml(label) + '</span>';
       t.onclick = onclick;
       return t;
@@ -1385,17 +1482,17 @@ window.addEventListener('unhandledrejection', function (event) {
       moreTiles.innerHTML = '';
       items.forEach(function (item) {
         if (item.view && primary.indexOf(item.view) !== -1) return;
-        moreTiles.appendChild(makeTile_(item.icon, navShort_(item), navClick_(item)));
+        moreTiles.appendChild(makeTile_(item.icon, navShort_(item), navClick_(item), ACCENTS_[item.view] || 'coral'));
       });
-      moreTiles.appendChild(makeTile_('bi-key-fill', 'Password', function () { closeMore(); openChangePasswordModal(); }));
-      moreTiles.appendChild(makeTile_('bi-box-arrow-right', 'Logout', function () { closeMore(); doLogout(); }));
+      moreTiles.appendChild(makeTile_('bi-key-fill', 'Password', function () { closeMore(); openChangePasswordModal(); }, 'slate'));
+      moreTiles.appendChild(makeTile_('bi-box-arrow-right', 'Logout', function () { closeMore(); doLogout(); }, 'coral'));
 
       // Dashboard: app-launcher style icon grid
       var tiles = document.getElementById('dashboardTiles');
       tiles.innerHTML = '';
       items.forEach(function (item) {
         if (item.view === 'dashboard') return;
-        tiles.appendChild(makeTile_(item.icon, navShort_(item), navClick_(item)));
+        tiles.appendChild(makeTile_(item.icon, navShort_(item), navClick_(item), ACCENTS_[item.view] || 'coral'));
       });
     }
 
@@ -1447,11 +1544,31 @@ window.addEventListener('unhandledrejection', function (event) {
       }).catch(function () { /* non-critical */ });
     }
 
+    // Colourful stat cards: each card gets its own gradient and an icon that
+    // matches what it counts.
+    var STAT_COLOURS_ = ['teal', 'violet', 'coral', 'sky', 'emerald', 'amber', 'pink', 'indigo'];
+    var statCounter_ = 0;
+    function statIcon_(label) {
+      var l = String(label).toLowerCase();
+      if (/school/.test(l)) return 'bi-mortarboard-fill';
+      if (/revenue|payment|fee/.test(l)) return 'bi-currency-rupee';
+      if (/vendor|listing/.test(l)) return 'bi-shop';
+      if (/enquir/.test(l)) return 'bi-envelope-fill';
+      if (/expiry|expire/.test(l)) return 'bi-hourglass-split';
+      if (/member/.test(l)) return 'bi-patch-check-fill';
+      if (/teacher|student|user|registration/.test(l)) return 'bi-people-fill';
+      if (/submitted|review|completed|evaluat/.test(l)) return 'bi-clipboard-check-fill';
+      return 'bi-bar-chart-fill';
+    }
     function statCard(label, value) {
-      return '<div class="col-6 col-md-3"><div class="yc-stat-card"><div class="value">' + value + '</div><div class="label">' + label + '</div></div></div>';
+      var colour = STAT_COLOURS_[statCounter_++ % STAT_COLOURS_.length];
+      return '<div class="col-6 col-md-3"><div class="yc-stat-card stat-' + colour + '">' +
+        '<div class="stat-icon"><i class="bi ' + statIcon_(label) + '"></i></div>' +
+        '<div class="value">' + value + '</div><div class="label">' + label + '</div></div></div>';
     }
 
     function renderDashboardStats(data) {
+      statCounter_ = 0;
       var row = document.getElementById('dashboardStatsRow');
       if (currentUser.role === 'Super Admin') {
         row.innerHTML =
